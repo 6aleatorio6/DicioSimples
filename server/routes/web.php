@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UploadWords;
 use Illuminate\Foundation\Application;
@@ -24,7 +25,7 @@ Route::middleware('auth')->group(function () {
 
 
 Route::group(['middleware' => "auth", "prefix" => "admin"], function () {
-    Route::inertia('', 'Dashboard')->name('dashboard');
+    Route::get('/', [Dashboard::class, 'show'])->name('dashboard');
 
     // 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
