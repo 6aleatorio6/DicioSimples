@@ -4,12 +4,13 @@ import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const { tableData } = defineProps<{ tableData: TableWordResponse }>();
-const searchQuery = ref();
+const search = ref();
 
 function reloadPage(url: string) {
     router.get(url, undefined, {
         preserveScroll: true,
         preserveState: true,
+        replace: true,
     });
 }
 
@@ -17,7 +18,7 @@ const handleSearch = function () {
     if (handleSearch.timeout) clearTimeout(handleSearch.timeout);
 
     handleSearch.timeout = setTimeout(
-        () => reloadPage(route('dashboard', { q: searchQuery.value })),
+        () => reloadPage(route('dashboard', { q: search.value })),
         250,
     );
 } as any;
@@ -36,9 +37,7 @@ const handleSearch = function () {
                 <button
                     class="top-1 my-auto flex h-9 w-9 items-center rounded px-2"
                     type="button"
-                    @click="
-                        (searchQuery = '') || reloadPage(route('dashboard'))
-                    "
+                    @click="(search = '') || reloadPage(route('dashboard'))"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +56,7 @@ const handleSearch = function () {
                 </button>
                 <div class="relative">
                     <input
-                        v-model="searchQuery"
+                        v-model="search"
                         @input="handleSearch"
                         class="ease h-10 w-full rounded border border-slate-200 bg-transparent bg-white py-2 pl-3 pr-11 text-sm text-slate-700 shadow-sm transition duration-200 placeholder:text-slate-400 hover:border-slate-400 focus:border-slate-400 focus:shadow-md focus:outline-none"
                         placeholder="Pesquise a palavra..."
@@ -162,9 +161,7 @@ const handleSearch = function () {
                     v-for="page in tableData.links"
                     :key="page.label"
                     :disabled="!page.url"
-                    @click="
-                        () => reloadPage(`${page.url!}&${'q=' + searchQuery}`)
-                    "
+                    @click="() => reloadPage(`${page.url!}&q=${search || ''}`)"
                     :class="[
                         'ease min-h-9 min-w-9 rounded border px-3 py-1 text-sm font-normal transition duration-200',
                         page.active
