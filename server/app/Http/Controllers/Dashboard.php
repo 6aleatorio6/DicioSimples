@@ -24,7 +24,7 @@ class Dashboard extends Controller
             "views",
         ], 'p', $page);
 
-        return Inertia::render('Dashboard', [
+        return Inertia::render('Dashboard/Dashboard', [
             'tableWords' =>  $words,
         ]);
     }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import DataTable from '@/Pages/Partials/DataTable.vue';
 import { TableWordResponse } from '@/types/Dashboard';
 import { Head } from '@inertiajs/vue3';
-import ImportWordsForm from './Partials/ImportWordsForm.vue';
+import DataTable from './partials/DataTable.vue';
+import ImportWordsForm from './partials/ImportWordsForm.vue';
 
 const props = defineProps<{ tableWords: TableWordResponse }>();
 </script>
