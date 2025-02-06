@@ -1,34 +1,27 @@
 <script setup lang="ts">
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
-defineProps<{
-    canLogin?: boolean;
-    canRegister?: boolean;
-    laravelVersion: string;
-    phpVersion: string;
+const props = defineProps<{
+    resultSearch: string[];
 }>();
 
 const query = ref('');
 const suggestions = ref<string[]>([]);
 
-const fetchSuggestions = async () => {
-    if (query.value.length > 2) {
-        // Simulate an API call
-        suggestions.value = await new Promise((resolve) => {
-            setTimeout(() => {
-                resolve([
-                    'Suggestion 1',
-                    'Suggestion 2',
-                    'Suggestion 3',
-                    'Suggestion 4',
-                ]);
-            }, 300);
-        });
-    } else {
+const fetchSuggestions = () => {
+    if (!query.value) {
         suggestions.value = [];
+        return;
     }
+
+    router.reload({
+        data: { s: query.value },
+        onSuccess: () => {
+            suggestions.value = props.resultSearch;
+        },
+    });
 };
 
 const selectSuggestion = (suggestion: string) => {
@@ -38,10 +31,10 @@ const selectSuggestion = (suggestion: string) => {
 </script>
 
 <template>
-    <Head title="Inicio" />
     <div
         class="mx-auto mt-[5%] flex flex-col items-center p-4 sm:w-8/12 lg:w-5/12"
     >
+        <Head title="Inicio" />
         <div
             class="mb-4 flex w-1/2 items-baseline justify-center space-x-2 pb-4"
         >

@@ -5,7 +5,6 @@ import { Link } from '@inertiajs/vue3';
 defineProps<{
     laravelVersion: string;
     phpVersion: string;
-    canLogin: boolean;
 }>();
 </script>
 

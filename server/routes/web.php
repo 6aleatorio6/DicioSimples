@@ -2,18 +2,11 @@
 
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchWords;
 use App\Http\Controllers\UploadWords;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Public/Home', [
-        'canLogin' => Route::has('login'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('home');
+Route::get('/', [SearchWords::class, 'show'])->name('words.search');
 
 
 
