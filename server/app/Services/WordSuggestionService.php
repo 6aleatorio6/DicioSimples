@@ -30,13 +30,11 @@ class WordSuggestionService
         $misspelling = $this->getMisspelling($prefix);
         if (!$misspelling) return [$prefix];
 
-        // Limitar o número de sugestões
-        $suggestions = array_slice($misspelling->getSuggestions(), 0, $limit);
-
         // Filtrar sugestões que contém espaços
-        $suggestions = array_filter($suggestions, function ($suggestion) {
-            return strpos($suggestion, ' ') === false;
-        });
+        $suggestions = array_filter($misspelling->getSuggestions(), fn($suggestion) => !strpos($suggestion, ' '));
+
+        // Limitar o número de sugestões
+        $suggestions = array_slice($suggestions, 0, $limit);
 
 
         return $suggestions;
