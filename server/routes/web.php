@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WordSearchController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::inertia('/', 'public/SearchWord')->name('home');
+Route::get('/', [WordSearchController::class, 'show'])->name('home');
+Route::post('/', [WordSearchController::class, 'search'])->name('home.search');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
