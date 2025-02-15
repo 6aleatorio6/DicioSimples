@@ -54,7 +54,7 @@ const selectSuggestion = (word: string) => {};
             />
             <img
                 class="absolute right-3 top-1/2 h-6 w-6 -translate-y-1/2 transform text-gray-500"
-                src="img/search-icon.svg"
+                src="/img/search-icon.svg"
             />
 
             <div

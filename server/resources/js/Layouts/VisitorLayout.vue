@@ -10,22 +10,22 @@ defineProps<{
 
 <template>
     <div class="">
-        <div class="bg-body font-inter text-text flex h-[99vh] flex-col">
+        <div class="flex h-[99vh] flex-col bg-body font-inter text-text">
             <header
-                class="bg-bodySec flex flex-col items-center justify-between gap-4 px-4 py-4 sm:flex-row lg:grid lg:grid-cols-6"
+                class="flex flex-col items-center justify-between gap-4 bg-bodySec px-4 py-4 sm:flex-row lg:grid lg:grid-cols-6"
             >
                 <Link
                     href="/"
                     class="flex flex-col items-center pt-4 sm:items-start lg:col-span-4 lg:col-start-2 lg:items-center"
                 >
                     <h1
-                        class="font-Jomhuria py-3 text-6xl !leading-3 sm:text-7xl lg:text-8xl"
+                        class="py-3 font-Jomhuria text-6xl !leading-3 sm:text-7xl lg:text-8xl"
                     >
                         <span class="text-text">Dicio</span>
                         <span class="text-textSec">Simples</span>
                     </h1>
                     <h2
-                        class="text-textSec text-center text-lg sm:text-left sm:text-xl lg:text-lg"
+                        class="text-center text-lg text-textSec sm:text-left sm:text-xl lg:text-lg"
                     >
                         Dicionário com explicações simples e fáceis de
                         compreender
@@ -35,7 +35,7 @@ defineProps<{
                     <Link
                         v-if="$page.props.auth.user"
                         :href="route('dashboard')"
-                        class="bg-bodyTri text-text hover:bg-bodyTri/70 rounded px-4 py-2"
+                        class="rounded bg-bodyTri px-4 py-2 text-text hover:bg-bodyTri/70"
                     >
                         Dashboard
                     </Link>
@@ -47,7 +47,7 @@ defineProps<{
             </main>
         </div>
 
-        <footer class="bg-bodySec w-full">
+        <footer class="w-full bg-bodySec">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <!--Grid-->
                 <div
@@ -61,7 +61,7 @@ defineProps<{
                                 class="flex items-center justify-center rounded-full hover:opacity-30"
                             >
                                 <img
-                                    src="img/linkedin-icon.png"
+                                    src="/img/linkedin-icon.png"
                                     alt="LinkedIn"
                                     class="h-full"
                                 />
@@ -71,7 +71,7 @@ defineProps<{
                                 class="flex items-center justify-center rounded-full hover:opacity-30"
                             >
                                 <img
-                                    src="img/github-icon.svg"
+                                    src="/img/github-icon.svg"
                                     alt="GitHub"
                                     class="h-full"
                                 />
