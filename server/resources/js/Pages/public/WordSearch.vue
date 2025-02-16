@@ -10,6 +10,7 @@ defineProps<{
 
 const query = ref('');
 const isLoading = ref(false);
+const isHover = ref(false);
 
 const fetchSuggestionsWithDelay = function () {
     isLoading.value = true;
@@ -27,12 +28,12 @@ const fetchSuggestionsWithDelay = function () {
     self.timeout = setTimeout(fetch, 250);
 };
 
-const selectSuggestion = (word: string) => {};
+const selectSuggestion = (word: string) => router.get(route('word', { word }));
 </script>
 
 <template>
     <div
-        class="mx-auto mt-[5%] flex flex-col items-center p-4 sm:w-8/12 lg:w-5/12"
+        class="mx-auto mt-[8%] flex flex-col items-center p-4 sm:w-10/12 lg:w-8/12"
     >
         <Head title="Inicio" />
         <div
@@ -48,6 +49,7 @@ const selectSuggestion = (word: string) => {};
                 v-model="query"
                 max="46"
                 @input="fetchSuggestionsWithDelay"
+                @keyup.enter="selectSuggestion(query)"
                 placeholder="Pesquisar "
                 class="w-full rounded-t-lg px-4 py-2 pr-10 shadow ring-transparent focus:outline-none sm:px-6 sm:py-3"
                 :class="[query ? 'border-b-0' : 'rounded-b-lg']"
@@ -61,21 +63,31 @@ const selectSuggestion = (word: string) => {};
                 class="absolute z-10 mt-0 w-full rounded-b-lg border border-gray-500 bg-white shadow-lg"
                 v-if="query"
             >
-                <p v-if="isLoading" class="px-4 py-2 text-sm text-gray-500">
+                <p
+                    v-if="isLoading"
+                    class="px-4 py-2 text-sm text-gray-500 sm:px-6"
+                >
                     Carregando...
                 </p>
                 <p
                     v-else-if="!hasSuggestions"
-                    class="px-4 py-2 text-sm text-gray-500"
+                    class="px-4 py-2 text-sm text-gray-500 sm:px-6"
                 >
                     Nenhum resultado encontrado
                 </p>
-                <ul v-else-if="suggestions">
+                <ul
+                    v-else-if="suggestions"
+                    @mouseover="isHover = true"
+                    @mouseleave="isHover = false"
+                >
                     <li
-                        v-for="suggestion in suggestions"
-                        :key="suggestion"
+                        v-for="(suggestion, i) of suggestions"
+                        :key="i"
                         @click="selectSuggestion(suggestion)"
-                        class="cursor-pointer px-4 py-2 hover:bg-gray-200"
+                        @mouseover="isHover = true"
+                        @mouseleave="isHover = false"
+                        class="cursor-pointer px-4 py-2 hover:bg-gray-200 sm:px-6"
+                        :class="[i == 0 && !isHover && 'bg-gray-200']"
                     >
                         {{ suggestion }}
                     </li>
