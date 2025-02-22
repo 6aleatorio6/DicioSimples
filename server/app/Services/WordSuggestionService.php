@@ -40,8 +40,8 @@ class WordSuggestionService
         return $suggestions;
     }
 
-    public function validateWord(string $word): bool
+    public function isWordValid(string $word): bool
     {
-        return !!$this->getMisspelling($word);
+        return !$this->getMisspelling($word);
     }
 }
