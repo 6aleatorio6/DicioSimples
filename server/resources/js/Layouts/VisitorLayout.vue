@@ -42,13 +42,13 @@ defineProps<{
                 </nav>
             </header>
 
-            <main class="flex flex-grow flex-col">
+            <main class="m-auto flex w-full max-w-4xl flex-grow flex-col">
                 <slot />
             </main>
         </div>
 
         <footer class="w-full bg-bodySec">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-4xl">
                 <!--Grid-->
                 <div
                     class="flex flex-col items-center justify-between gap-8 py-8 lg:flex-row"
