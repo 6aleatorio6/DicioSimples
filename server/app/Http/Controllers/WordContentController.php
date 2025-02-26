@@ -20,7 +20,7 @@ class WordContentController extends Controller
 
     private function getWordContent(string $wordName)
     {
-        $wordContent = $this->word->with(['baseForm:word', 'wordSynonyms:id,word', 'wordAntonyms:id,word'])
+        $wordContent = $this->word->with(['baseForm:id,word', 'wordSynonyms:id,word', 'wordAntonyms:id,word'])
             ->where('word', '=', $wordName)
             ->whereNotNull('meanings')
             ->first();
