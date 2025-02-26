@@ -1,36 +1,40 @@
 <script lang="ts" setup>
 import ListVertical from '@/Components/List.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { computed } from 'vue';
 
-const props = defineProps<{
+interface WordRelation {
     word: string;
-    wordBase: string;
+    id: number;
+}
+
+defineProps<{
+    word: string;
+    baseForm?: WordRelation;
     meanings: { title: string; explanation: string }[];
-    synonyms: string[];
-    antonyms: string[];
+    wordSynonyms: WordRelation[];
+    wordAntonyms: WordRelation[];
 }>();
 
-const capWord = computed(
-    () => props.word.charAt(0).toUpperCase() + props.word.slice(1),
-);
+function capWord(word: string): string {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+}
 </script>
 
 <template>
-    <Head :title="capWord" />
-    <section class="relative mt-7 flex w-full border-b-2 border-gray-400 pb-2">
-        <Link
-            :href="route('home')"
-            class="absolute rounded bg-bodyTri px-4 py-1 text-xl font-bold"
-        >
-            Voltar
-        </Link>
-        <h1 class="m-auto text-3xl font-bold uppercase">{{ capWord }}</h1>
+    <Head :title="capWord(word)" />
+    <section class="mt-7">
+        <h1 class="ms- text-4xl font-bold uppercase">{{ word }}</h1>
+        <div class="my-1 border-b-2 border-gray-400" />
+        <p v-if="baseForm" class="ms-4 text-lg">
+            Forma base:
+            <Link :href="route('word', baseForm.word)">
+                <span class="text-blue-800 underline">{{
+                    capWord(baseForm.word)
+                }}</span>
+            </Link>
+        </p>
     </section>
     <section class="mt-4">
-        <p class="text-lg">
-            {{ capWord }} pode ter diferentes significados, como:
-        </p>
         <div
             v-for="(meaning, index) in meanings"
             :key="index"
@@ -42,18 +46,24 @@ const capWord = computed(
     </section>
     <section class="mt-4 flex">
         <ListVertical
-            v-if="synonyms.length"
+            v-if="wordSynonyms.length"
             title="Palavras com sentido semelhante"
-            :listWord="synonyms"
+            :listWord="wordSynonyms"
         />
         <div
-            v-if="synonyms.length && antonyms.length"
+            v-if="wordSynonyms.length && wordAntonyms.length"
             class="mx-4 border-l-2 border-gray-300"
         ></div>
         <ListVertical
-            v-if="antonyms.length"
+            v-if="wordAntonyms.length"
             title="Palavras com sentido contrário"
-            :listWord="antonyms"
+            :listWord="wordAntonyms"
         />
     </section>
+    <Link
+        :href="route('home')"
+        class="rounded bg-bodyTri px-4 py-1 text-xl font-bold"
+    >
+        Voltar
+    </Link>
 </template>
