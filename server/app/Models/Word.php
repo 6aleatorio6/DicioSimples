@@ -22,7 +22,6 @@ class Word extends Model
 
 	protected $fillable = [
 		'word',
-		'base_form',
 		'meanings',
 	];
 
@@ -34,7 +33,7 @@ class Word extends Model
 
 	public function baseForm()
 	{
-		return $this->belongsTo(Word::class, 'base_form')->select("word");
+		return $this->belongsTo(Word::class, 'base_form');
 	}
 
 	public function wordSynonyms()
