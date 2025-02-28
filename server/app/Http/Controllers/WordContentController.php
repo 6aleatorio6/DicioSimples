@@ -35,7 +35,7 @@ class WordContentController extends Controller
             $wordContent->createAndAttachWords("Synonyms", $wordContentGenereated['synonyms']);
             $wordContent->baseForm()->associate($this->word->firstOrcreate(['word' => $wordContentGenereated['wordBase']]));
 
-            $wordContent->load(['baseForm:word', 'wordSynonyms:id,word', 'wordAntonyms:id,word']);
+            $wordContent->load(['baseForm:id,word', 'wordSynonyms:id,word', 'wordAntonyms:id,word']);
         }
 
 
