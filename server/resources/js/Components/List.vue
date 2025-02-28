@@ -1,25 +1,37 @@
 <script lang="ts" setup>
+import { WordRelation } from '@/types';
+import { Link } from '@inertiajs/vue3';
+
 const props = defineProps<{
-    title: string;
-    listWord: string[];
+    startText: string;
+    emptyListText: string;
+    listWord: WordRelation[];
 }>();
 
-const isEnd = (i: number, add: number) => props.listWord.length === i + add;
+const isLastItem = (i: number, add: number) =>
+    props.listWord.length === i + add;
 </script>
 
 <template>
-    <div class="flex space-x-4">
-        <h2 class="text-xl font-bold">{{ title }}:</h2>
-        <ul class="flex">
-            <li
-                v-for="(item, idx) in listWord"
-                :key="idx"
-                class="text list-none pe-1"
+    <ul class="flex flex-wrap text-lg" v-if="listWord.length">
+        <span class="me-1">{{ startText }}</span>
+        <li
+            v-for="(item, idx) in listWord"
+            :key="idx"
+            class="mt-auto list-none pe-1"
+        >
+            <Link
+                :href="route('word', item.word)"
+                class="text-blue-800 underline"
             >
-                <template v-if="isEnd(idx, 1)">{{ item }} </template>
-                <template v-else-if="isEnd(idx, 2)">{{ item }} e</template>
-                <template v-else>{{ item + ',' }}</template>
-            </li>
-        </ul>
-    </div>
+                {{ item.word }}
+            </Link>
+            <span>
+                {{
+                    isLastItem(idx, 2) ? ' e ' : !isLastItem(idx, 1) ? ', ' : ''
+                }}
+            </span>
+        </li>
+    </ul>
+    <p v-else class="text-lg">{{ emptyListText }}</p>
 </template>
