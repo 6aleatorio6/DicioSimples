@@ -10,7 +10,7 @@ defineProps<{
 
 <template>
     <div class="">
-        <div class="flex h-[99vh] flex-col bg-body font-inter text-text">
+        <div class="flex min-h-[99vh] flex-col bg-body font-inter text-text">
             <header
                 class="flex flex-col items-center justify-between gap-4 bg-bodySec px-4 py-4 sm:flex-row lg:grid lg:grid-cols-6"
             >
@@ -42,7 +42,7 @@ defineProps<{
                 </nav>
             </header>
 
-            <main class="m-auto flex w-full max-w-4xl flex-grow flex-col">
+            <main class="m-auto flex w-full max-w-4xl flex-grow flex-col px-3">
                 <slot />
             </main>
         </div>
