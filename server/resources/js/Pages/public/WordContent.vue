@@ -65,7 +65,7 @@ function capWord(word: string): string {
         />
     </SectionContent>
 
-    <Link :href="route('home')" class="m-auto w-8/12">
+    <Link :href="route('home')" class="m-auto my-10 w-8/12">
         <PrimaryButton class="h-14 w-full justify-center text-2xl">
             Buscar outra palavra
         </PrimaryButton>
