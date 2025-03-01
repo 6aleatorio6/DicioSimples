@@ -1,3 +1,5 @@
+import { Ref, ref } from 'vue';
+
 export function executeWithDelay<T extends any[]>(
     cb: (...args: T) => void,
     delay = 250,
@@ -11,4 +13,9 @@ export function executeWithDelay<T extends any[]>(
 
 export function capWord(word: string): string {
     return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+export function useToggle(initial = false): [Ref<boolean>, () => any] {
+    const value = ref(initial);
+    return [value, () => (value.value = !value.value)];
 }
