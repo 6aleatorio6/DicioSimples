@@ -10,22 +10,13 @@ defineProps<{
 
 const query = ref('');
 const isLoading = ref(false);
-const isHover = ref(false);
-
-const fetchSuggestionsWithDelay = function () {
+const fetch = (query: string) => {
     isLoading.value = true;
-    const fetch = () => {
-        router.reload({
-            method: 'post',
-            data: { query: query.value },
-            onFinish: () => (isLoading.value = false),
-        });
-    };
-
-    // cancela a requisição anterior e inicia uma nova
-    const self = fetchSuggestionsWithDelay as any;
-    if (self.timeout) clearTimeout(self.timeout);
-    self.timeout = setTimeout(fetch, 250);
+    router.reload({
+        method: 'post',
+        data: { query },
+        onFinish: () => (isLoading.value = false),
+    });
 };
 
 const selectSuggestion = (word: string) => router.get(route('word', { word }));

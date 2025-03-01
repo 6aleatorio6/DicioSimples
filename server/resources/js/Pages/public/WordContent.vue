@@ -2,6 +2,7 @@
 import List from '@/Components/List.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SectionContent from '@/Components/SectionContent.vue';
+import { capWord } from '@/helpers';
 import { WordRelation } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -12,10 +13,6 @@ defineProps<{
     wordSynonyms: WordRelation[];
     wordAntonyms: WordRelation[];
 }>();
-
-function capWord(word: string): string {
-    return word.charAt(0).toUpperCase() + word.slice(1);
-}
 </script>
 
 <template>
