@@ -11,6 +11,33 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 
+/**
+ * 
+ *
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $word
+ * @property int|null $base_form
+ * @property string|null $meanings
+ * @property int $views
+ * @property-read Word|null $baseForm
+ * @property-read Collection<int, Word> $wordAntonyms
+ * @property-read int|null $word_antonyms_count
+ * @property-read Collection<int, Word> $wordSynonyms
+ * @property-read int|null $word_synonyms_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereBaseForm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereMeanings($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereViews($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereWord($value)
+ * @mixin \Eloquent
+ */
 class Word extends Model
 {
 	protected $table = 'words';
