@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import InputSearch from '@/Components/InputSearch.vue';
+import { executeWithDelay } from '@/helpers';
 import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -8,7 +10,7 @@ defineProps<{
     hasSuggestions?: boolean;
 }>();
 
-const query = ref('');
+const isHover = ref(false);
 const isLoading = ref(false);
 const fetch = (query: string) => {
     isLoading.value = true;
@@ -34,56 +36,30 @@ const selectSuggestion = (word: string) => router.get(route('word', { word }));
             <ApplicationLogo width="80%" />
             <ApplicationLogo width="45%" />
         </div>
-        <div class="relative w-full">
-            <input
-                type="text"
-                v-model="query"
-                max="46"
-                @input="fetchSuggestionsWithDelay"
-                @keyup.enter="selectSuggestion(query)"
-                placeholder="Pesquisar "
-                class="w-full rounded-t-lg px-4 py-2 pr-10 shadow ring-transparent focus:outline-none sm:px-6 sm:py-3"
-                :class="[query ? 'border-b-0' : 'rounded-b-lg']"
-            />
-            <img
-                class="absolute right-3 top-1/2 h-6 w-6 -translate-y-1/2 transform text-gray-500"
-                src="/img/search-icon.svg"
-            />
-
-            <div
-                class="absolute z-10 mt-0 w-full rounded-b-lg border border-gray-500 bg-white shadow-lg"
-                v-if="query"
-            >
-                <p
-                    v-if="isLoading"
-                    class="px-4 py-2 text-sm text-gray-500 sm:px-6"
-                >
-                    Carregando...
-                </p>
-                <p
-                    v-else-if="!hasSuggestions"
-                    class="px-4 py-2 text-sm text-gray-500 sm:px-6"
-                >
-                    Nenhum resultado encontrado
-                </p>
-                <ul
-                    v-else-if="suggestions"
-                    @mouseover="isHover = true"
+        <InputSearch
+            :submit="() => suggestions && selectSuggestion(suggestions[0])"
+            :input-search="executeWithDelay(fetch)"
+        >
+            <ul class="divide-y divide-gray-200">
+                <li v-if="isLoading" class="px-4 py-2">Carregando...</li>
+                <li v-else-if="!hasSuggestions" class="px-4 py-2">
+                    Nenhuma sugestão encontrada
+                </li>
+                <li
+                    v-else
+                    v-for="(suggestion, index) in suggestions"
+                    :key="suggestion"
+                    @click="selectSuggestion(suggestion)"
+                    @mouseenter="isHover = true"
                     @mouseleave="isHover = false"
+                    :class="[
+                        isHover ? 'hover:bg-gray-200' : !index && 'bg-gray-200',
+                    ]"
+                    class="cursor-pointer px-4 py-2 sm:px-6"
                 >
-                    <li
-                        v-for="(suggestion, i) of suggestions"
-                        :key="i"
-                        @click="selectSuggestion(suggestion)"
-                        @mouseover="isHover = true"
-                        @mouseleave="isHover = false"
-                        class="cursor-pointer px-4 py-2 hover:bg-gray-200 sm:px-6"
-                        :class="[i == 0 && !isHover && 'bg-gray-200']"
-                    >
-                        {{ suggestion }}
-                    </li>
-                </ul>
-            </div>
-        </div>
+                    {{ suggestion }}
+                </li>
+            </ul>
+        </InputSearch>
     </div>
 </template>
