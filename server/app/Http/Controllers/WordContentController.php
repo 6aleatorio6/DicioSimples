@@ -7,13 +7,16 @@ use App\Services\WordContentGeneratorService;
 use App\Services\WordSuggestionService;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Illuminate\Contracts\Cache\Repository as Cache;
+
 
 class WordContentController extends Controller
 {
     function __construct(
         private WordContentGeneratorService $wordMeaningGeneratorService,
         private WordSuggestionService $wordSuggestionService,
-        private Word $word
+        private Word $word,
+        private Cache $cache
     ) {}
 
 
@@ -46,10 +49,15 @@ class WordContentController extends Controller
     public function __invoke(string $word)
     {
         // Validate word
-        $isWordValid = $this->wordSuggestionService->isWordValid($word);
-        if (!$isWordValid) throw new BadRequestException('Palavra inválida');
+        if (!$this->cache->has('word_' . $word)) {
+            $isWordValid = $this->wordSuggestionService->isWordValid($word);
+            if (!$isWordValid) throw new BadRequestException('Palavra inválida');
+        }
 
-        $word = $this->getWordContent($word);
+        $word = $this->cache->rememberForever(
+            'word_' . $word,
+            fn() => $this->getWordContent($word)
+        );
 
         return Inertia::render('public/WordContent', $word);
     }
