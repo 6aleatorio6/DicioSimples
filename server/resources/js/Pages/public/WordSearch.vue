@@ -14,14 +14,16 @@ const isHover = ref(false);
 const isLoading = ref(false);
 const [isLoadingSelected, setIsLoadingSelected] = useToggle(false);
 
-const fetch = (query: string) => {
+function fetchWithDelay(query: string) {
     isLoading.value = true;
-    router.reload({
-        method: 'post',
-        data: { query },
-        onFinish: () => (isLoading.value = false),
+    executeWithDelay(() => {
+        router.reload({
+            method: 'post',
+            data: { query },
+            onFinish: () => (isLoading.value = false),
+        });
     });
-};
+}
 
 const selectSuggestion = (word: string) => {
     setIsLoadingSelected();
@@ -43,7 +45,7 @@ const selectSuggestion = (word: string) => {
         </div>
         <InputSearch
             :submit="() => suggestions && selectSuggestion(suggestions[0])"
-            :input-search="executeWithDelay(fetch)"
+            :input-search="fetchWithDelay"
             :is-loading="isLoadingSelected"
         >
             <ul class="divide-y divide-gray-200">

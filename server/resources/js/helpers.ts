@@ -1,14 +1,9 @@
 import { Ref, ref } from 'vue';
 
-export function executeWithDelay<T extends any[]>(
-    cb: (...args: T) => void,
-    delay = 250,
-) {
-    return (...args: T) => {
-        const self = executeWithDelay as any;
-        if (self.timeout) clearTimeout(self.timeout);
-        self.timeout = setTimeout(() => cb(...args), delay);
-    };
+export function executeWithDelay(cb: () => void, delay = 300) {
+    const self = executeWithDelay as any;
+    if (self.timeout) clearTimeout(self.timeout);
+    self.timeout = setTimeout(() => cb(), delay);
 }
 
 export function capWord(word: string): string {
