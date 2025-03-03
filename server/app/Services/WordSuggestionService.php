@@ -23,12 +23,14 @@ class WordSuggestionService
     }
 
     /**
+     * Quando retorna null, significa que a palavra está correta
+     * 
      * @return array<string>
      */
-    public function getSuggestions(string $prefix, int $limit): array
+    public function getSuggestions(string $prefix, int $limit): ?array
     {
         $misspelling = $this->getMisspelling($prefix);
-        if (!$misspelling) return [$prefix];
+        if (!$misspelling) return null;
 
         // Filtrar sugestões que contém espaços
         $suggestions = array_filter($misspelling->getSuggestions(), fn($suggestion) => !strpos($suggestion, ' '));
@@ -36,12 +38,8 @@ class WordSuggestionService
         // Limitar o número de sugestões
         $suggestions = array_slice($suggestions, 0, $limit);
 
-
         return $suggestions;
     }
 
-    public function isWordValid(string $word): bool
-    {
-        return !$this->getMisspelling($word);
-    }
+   
 }
