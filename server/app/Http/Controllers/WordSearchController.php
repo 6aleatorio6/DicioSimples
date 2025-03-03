@@ -30,7 +30,7 @@ class WordSearchController extends Controller
             'public/WordSearch',
             [
                 "suggestions" => $suggestions ?? [$query],
-                "hasSuggestions" =>  !!$suggestions
+                "hasSuggestions" =>  !$suggestions || count($suggestions) > 0,
             ]
         );
     }
