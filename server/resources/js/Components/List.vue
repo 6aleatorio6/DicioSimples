@@ -5,7 +5,7 @@ import { Link } from '@inertiajs/vue3';
 const props = defineProps<{
     startText: string;
     emptyListText: string;
-    listWord: WordRelation[];
+    listWord: Pick<WordRelation, 'word'>[];
 }>();
 
 const isLastItem = (i: number, add: number) =>
@@ -21,7 +21,7 @@ const isLastItem = (i: number, add: number) =>
             class="mt-auto list-none pe-1"
         >
             <Link
-                :href="route('word', item.word)"
+                :href="route('word', item.word.toLowerCase())"
                 class="text-blue-800 underline"
             >
                 {{ item.word }}
