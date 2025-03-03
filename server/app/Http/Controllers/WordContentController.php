@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidWordException;
 use App\Models\Word;
 use App\Services\WordContentGeneratorService;
 use App\Services\WordSuggestionService;
@@ -50,15 +51,15 @@ class WordContentController extends Controller
     {
         // Validate word
         if (!$this->cache->has('word_' . $word)) {
-            $isWordValid = $this->wordSuggestionService->isWordValid($word);
-            if (!$isWordValid) throw new BadRequestException('Palavra inválida');
+            $suggestions = $this->wordSuggestionService->getSuggestionsCached($word);
+            if ($suggestions) throw new InvalidWordException($word, $suggestions);
         }
 
-        $word = $this->cache->rememberForever(
+        $wordContent = $this->cache->rememberForever(
             'word_' . $word,
             fn() => $this->getWordContent($word)
         );
 
-        return Inertia::render('public/WordContent', $word);
+        return Inertia::render('public/WordContent', $wordContent);
     }
 }
