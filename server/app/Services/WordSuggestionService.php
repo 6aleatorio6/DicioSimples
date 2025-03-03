@@ -41,5 +41,11 @@ class WordSuggestionService
         return $suggestions;
     }
 
-   
+    public function getSuggestionsCached(string $prefix, $limit = 5): ?array
+    {
+        return cache()->rememberForever(
+            'search_suggestions_' . $prefix . '_' . $limit,
+            fn() => $this->getSuggestions($prefix, $limit)
+        );
+    }
 }

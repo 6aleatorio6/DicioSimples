@@ -24,16 +24,13 @@ class WordSearchController extends Controller
 
         $query = $request->input('query');
 
-        $suggestions = $this->cache->rememberForever(
-            'search_suggestions_' . $query,
-            fn() => $this->wordSuggestionService->getSuggestions($query, 5)
-        );
+        $suggestions = $this->wordSuggestionService->getSuggestionsCached($query);
 
         return Inertia::render(
             'public/WordSearch',
             [
-                "suggestions" => $suggestions,
-                "hasSuggestions" => count($suggestions) > 0
+                "suggestions" => $suggestions ?? [$query],
+                "hasSuggestions" =>  !!$suggestions
             ]
         );
     }
