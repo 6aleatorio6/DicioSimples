@@ -8,6 +8,7 @@ import { Head, Link } from '@inertiajs/vue3';
 
 defineProps<{
     word: string;
+    partOfSpeech: string;
     baseForm?: WordRelation;
     meanings: { title: string; explanation: string }[];
     wordSynonyms: WordRelation[];
@@ -20,13 +21,16 @@ defineProps<{
     <section class="mt-8">
         <h1 class="text-5xl font-bold uppercase">{{ word }}</h1>
         <div class="my-1 border-b-2 border-gray-400" />
-        <p v-if="baseForm && baseForm.word !== word" class="ms-4 text-lg">
-            Palavra base:
-            <Link :href="route('word', baseForm.word)">
-                <span class="text-blue-800 underline">{{
-                    capWord(baseForm.word)
-                }}</span>
-            </Link>
+        <p v-if="partOfSpeech" class="ms-4 text-lg">
+            {{ capWord(partOfSpeech) }}
+            <template v-if="baseForm && baseForm.word !== word">
+                de
+                <Link :href="route('word', baseForm.word)">
+                    <span class="text-blue-800 underline">{{
+                        capWord(baseForm.word)
+                    }}</span>
+                </Link>
+            </template>
         </p>
     </section>
 

@@ -7,7 +7,6 @@ use App\Models\Word;
 use App\Services\WordContentGeneratorService;
 use App\Services\WordSuggestionService;
 use Inertia\Inertia;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Illuminate\Contracts\Cache\Repository as Cache;
 
 
@@ -22,6 +21,7 @@ class WordContentController extends Controller
 
 
 
+
     private function getWordContent(string $wordName)
     {
         $wordContent = $this->word->with(['baseForm:id,word', 'wordSynonyms:id,word', 'wordAntonyms:id,word'])
@@ -32,6 +32,8 @@ class WordContentController extends Controller
 
         if (!$wordContent) {
             $wordContentGenereated = $this->wordMeaningGeneratorService->generate($wordName);
+
+            if (!$wordContentGenereated['isExist']) throw new InvalidWordException($wordName, []);
 
             $wordContent = $this->word->updateOrCreate(['word' => $wordName], $wordContentGenereated);
 
@@ -45,6 +47,7 @@ class WordContentController extends Controller
 
         return $wordContent;
     }
+
 
 
     public function __invoke(string $word)
