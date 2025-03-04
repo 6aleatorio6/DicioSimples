@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('word')->unique();
+            $table->string('partOfSpeech')->nullable();
             $table->foreignId('base_form')->nullable()->constrained('words');
             $table->json('meanings')->nullable();
             $table->integer('views')->default(0);
@@ -54,7 +55,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('word_inflection');
+        // Schema::dropIfExists('word_inflection');
         Schema::dropIfExists('word_synonym');
         Schema::dropIfExists('word_antonym');
         Schema::dropIfExists('words');
