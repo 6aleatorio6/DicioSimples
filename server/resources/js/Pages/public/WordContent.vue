@@ -21,7 +21,7 @@ defineProps<{
     <section class="mt-8">
         <h1 class="text-5xl font-bold uppercase">{{ word }}</h1>
         <div class="my-1 border-b-2 border-gray-400" />
-        <p v-if="partOfSpeech" class="ms-4 text-lg">
+        <p v-if="partOfSpeech" class="ms-2 text-lg">
             {{ capWord(partOfSpeech) }}
             <template v-if="baseForm && baseForm.word !== word">
                 de
@@ -44,7 +44,7 @@ defineProps<{
             >
                 {{ meaning.title }}
             </h3>
-            <p class="text-textSec-500 ms-2">{{ meaning.explanation }}</p>
+            <p class="text-textSec-500">{{ meaning.explanation }}</p>
         </div>
     </SectionContent>
 
