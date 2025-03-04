@@ -7,38 +7,21 @@ use Illuminate\Support\Facades\Http;
 class WordContentGeneratorService
 {
 
-  private $requestUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
+  private $apiKey;
 
-  function __construct()
+  public function __construct()
   {
-    $this->requestUrl .= env('GEMINI_KEY');
+    $this->apiKey = env('GEMINI_KEY'); // Defina sua chave da API no .env
   }
 
 
-  /**
-   * @return array{
-   *     word: string,
-   *     wordBase: string,
-   *     meanings: array<array{title: string, explanation: string}>,
-   *     synonyms: string[],
-   *     antonyms: string[]
-   * }
-   */
-  public function generate(string $word): array
+  private function fetch(string $word): array
   {
-    $response = Http::retry(3, 300)->throw()->post($this->requestUrl, $this->getRequestBody($word));
 
-    $response = $response->json();
-
-    $wordContentJson = $response['candidates'][0]['content']['parts'][0]['text'];
-
-    return json_decode($wordContentJson, true);
-  }
+    $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=' . $this->apiKey;
 
 
-  private function getRequestBody(string $word): array
-  {
-    return [
+    $body = [
       "contents" => [
         [
           "role" => "user",
@@ -53,13 +36,13 @@ class WordContentGeneratorService
         "role" => "user",
         "parts" => [
           [
-            "text" => "Você atua como um dicionário abrangente que cobre palavras formais, informais e gírias populares. Ao receber uma palavra, retorne um objeto JSON contendo informações detalhadas e precisas, obedecendo estritamente o schema especificado. Siga as regras abaixo:\n\nUtilize somente definições provenientes de dicionários oficiais ou amplamente reconhecidos.\nPara gírias, adote definições comumente aceitas na linguagem popular.\nSe a palavra possuir múltiplos significados, liste todos no campo \"meanings\", explicando detalhadamente cada significado, incluindo nuances, exemplos e contextos de uso sempre que disponíveis.\nCaso a palavra seja uma flexão, descreva as variações em relação à forma base, detalhando as diferenças de uso e os contextos específicos em que cada forma é empregada.\nSe a palavra tiver uso informal ou for uma gíria, inclua uma explicação clara sobre esse aspecto.\nResponda apenas em JSON, sem comentários ou textos adicionais.\nSiga rigorosamente o schema especificado: inclua somente os campos e tipos determinados, sem adicionar campos extras.\nSe alguma informação não estiver disponível, retorne valores vazios (\"\" para strings e [] para arrays), sem suposições.\nCertifique-se de que o JSON esteja válido e siga exatamente o schema antes de enviar a resposta.\nSua tarefa é explicar todos os significados que uma palavra pode ter, ressaltando as diferenças entre eles e detalhando as variações de uso quando a palavra é uma flexão."
+            "text" => "Você é um dicionário de português do Brasil. Quando receber uma consulta, retorne UM OBJETO JSON seguindo EXATAMENTE o schema abaixo. Não adicione textos extras.\n\nCampos obrigatórios:\n\n- word: A palavra consultada.\n- wordBase: A forma básica da palavra, sem alterações (ex.: \"correr\", não \"corri\").\n- partOfSpeech: Tipo de palavra (ex.: substantivo, verbo, adjetivo).\n- meanings: Todos os significados da palavra, tanto os do dicionário quanto os populares. Se os contextos ou explicações forem próximos, combine-os em um único contexto mais amplo. Cada item deve ter:\n  - title: Contexto ou tipo de significado (ex.: \"mineração\" para \"mina\").\n  - explanation: Definição simples e fácil de entender.\n- synonyms: Lista de sinônimos (palavras com o mesmo significado). Máximo de 5 palavras. Pode ser vazio.\n- antonyms: Lista de antônimos (palavras com significado oposto). Máximo de 5 palavras. Pode ser vazio.\n- isExist: Indica se a palavra existe no dicionário (true ou false).\n\nRegras:\n- Retorne somente o JSON, sem texto extra.\n- As definições devem ser bem simples e fáceis de entender.\n- Liste TODOS os significados da palavra, incluindo tanto os formais quanto os populares. Combine contextos semelhantes, se necessário.\n"
           ]
         ]
       ],
       "generationConfig" => [
-        "temperature" => 0.7,
-        "topK" => 64,
+        "temperature" => 0.3,
+        "topK" => 40,
         "topP" => 0.95,
         "maxOutputTokens" => 8192,
         "responseMimeType" => "application/json",
@@ -68,25 +51,29 @@ class WordContentGeneratorService
           "properties" => [
             "word" => [
               "type" => "string",
-              "description" => "A palavra consultada, conforme inserida na pesquisa do dicionário."
+              "description" => "A palavra consultada."
             ],
             "wordBase" => [
               "type" => "string",
-              "description" => "A forma canônica ou raiz da palavra. Se a palavra consultada for uma flexão, este campo indica sua forma base."
+              "description" => "Forma básica da palavra, sem mudanças."
+            ],
+            "partOfSpeech" => [
+              "type" => "string",
+              "description" => "Tipo de palavra (ex.: substantivo, verbo, adjetivo)."
             ],
             "meanings" => [
               "type" => "array",
-              "description" => "Lista de todos os significados da palavra, conforme definidos em fontes oficiais ou amplamente reconhecidos. Cada entrada deve conter um título e uma explicação detalhada.",
+              "description" => "Lista de todos os significados da palavra, incluindo significados do dicionário e populares. Se contextos ou explicações forem semelhantes, combine-os.",
               "items" => [
                 "type" => "object",
                 "properties" => [
                   "title" => [
                     "type" => "string",
-                    "description" => "Rótulo ou identificação do significado, especialmente útil quando há mais de uma definição para a palavra."
+                    "description" => "Contexto ou tipo de significado."
                   ],
                   "explanation" => [
                     "type" => "string",
-                    "description" => "Explicação clara, detalhada e simplificada do significado, utilizando vocabulário acessível e fundamentado em dicionários oficiais."
+                    "description" => "Definição simples."
                   ]
                 ],
                 "required" => [
@@ -97,28 +84,59 @@ class WordContentGeneratorService
             ],
             "synonyms" => [
               "type" => "array",
-              "description" => "Lista de palavras ou expressões que possuem significados semelhantes à palavra consultada.",
+              "description" => "Sinônimos. Máximo de 5 palavras.",
               "items" => [
                 "type" => "string"
               ]
             ],
             "antonyms" => [
               "type" => "array",
-              "description" => "Lista de palavras ou expressões que possuem significados opostos à palavra consultada.",
+              "description" => "Antônimos. Máximo de 5 palavras.",
               "items" => [
                 "type" => "string"
               ]
+            ],
+            "isExist" => [
+              "type" => "boolean",
+              "description" => "Indica se a palavra existe (true ou false)."
             ]
           ],
           "required" => [
             "word",
             "wordBase",
+            "partOfSpeech",
             "meanings",
-            "synonyms",
-            "antonyms"
+            "isExist"
           ]
         ]
       ]
     ];
+
+    $response = Http::retry(3, 300)->throw()->post($url, $body);
+
+    $response = $response->json();
+
+    $wordContentJson = $response['candidates'][0]['content']['parts'][0]['text'];
+
+    return json_decode($wordContentJson, true);
+  }
+
+  /**
+   * @return array{
+   *     word: string,
+   *     wordBase: string,
+   *     partOfSpeech: string,
+   *     meanings: array<array{ title: string, explanation: string }>,
+   *     synonyms: string[],
+   *     antonyms: string[],
+   *     isExist: bool
+   * }
+   */
+  public function generate(string $word): array
+  {
+    $wordContent = $this->fetch($word);
+
+
+    return $wordContent;
   }
 }
