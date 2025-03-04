@@ -33,22 +33,22 @@ defineProps<{
             </template>
         </p>
     </section>
-
     <SectionContent title="Definições">
         <div
             v-for="(meaning, index) in meanings"
             :key="index"
             class="mt-2 text-lg"
         >
-            <h3 class="inline font-bold">
-                {{ index + 1 }}. {{ meaning.title }}
+            <h3
+                class="text-textSec-700 w-fit rounded-lg text-lg font-bold capitalize"
+            >
+                {{ meaning.title }}
             </h3>
-            <span> – </span>
-            <p class="inline">{{ meaning.explanation }}</p>
+            <p class="text-textSec-500 ms-2">{{ meaning.explanation }}</p>
         </div>
     </SectionContent>
 
-    <SectionContent title="Sinônimos">
+    <SectionContent v-if="wordSynonyms?.length" title="Sinônimos">
         <List
             startText="Palavras com significado semelhante: "
             emptyListText="Nenhum sinônimo disponível para esta palavra"
@@ -57,7 +57,7 @@ defineProps<{
         />
     </SectionContent>
 
-    <SectionContent title="Antônimos">
+    <SectionContent v-if="wordAntonyms?.length" title="Antônimos">
         <List
             startText="Palavras com significado oposto: "
             emptyListText="Nenhum antônimo disponível para esta palavra"

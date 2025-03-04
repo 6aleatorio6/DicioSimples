@@ -13,25 +13,33 @@ const isLastItem = (i: number, add: number) =>
 </script>
 
 <template>
-    <ul class="flex flex-wrap text-lg" v-if="listWord.length">
-        <span class="me-1">{{ startText }}</span>
-        <li
-            v-for="(item, idx) in listWord"
-            :key="idx"
-            class="mt-auto list-none pe-1"
-        >
-            <Link
-                :href="route('word', item.word.toLowerCase())"
-                class="text-blue-800 underline"
-            >
-                {{ item.word }}
-            </Link>
-            <span>
-                {{
-                    isLastItem(idx, 2) ? ' e ' : !isLastItem(idx, 1) ? ', ' : ''
-                }}
-            </span>
+    <ul class="flex flex-wrap text-lg">
+        <li v-if="!listWord.length" class="mt-auto list-none pe-1">
+            {{ emptyListText }}
         </li>
+        <template v-else>
+            <span class="text-textSec-700 me-1">{{ startText }}</span>
+            <li
+                v-for="(item, idx) in listWord"
+                :key="idx"
+                class="mt-auto list-none pe-1"
+            >
+                <Link
+                    :href="route('word', item.word.toLowerCase())"
+                    class="text-blue-700 underline"
+                >
+                    {{ item.word }}
+                </Link>
+                <span>
+                    {{
+                        isLastItem(idx, 2)
+                            ? ' e '
+                            : !isLastItem(idx, 1)
+                              ? ', '
+                              : ''
+                    }}
+                </span>
+            </li>
+        </template>
     </ul>
-    <p v-else class="text-lg">{{ emptyListText }}</p>
 </template>
