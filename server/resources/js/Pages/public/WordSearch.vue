@@ -5,10 +5,7 @@ import { executeWithDelay, useToggle } from '@/helpers';
 import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
-defineProps<{
-    suggestions?: string[];
-    hasSuggestions?: boolean;
-}>();
+defineProps<{ suggestions?: string[] }>();
 
 const isHover = ref(false);
 const isLoading = ref(false);
@@ -32,10 +29,10 @@ const selectSuggestion = (word: string) => {
 </script>
 
 <template>
+    <Head title="Inicio" />
     <div
         class="mx-auto mt-[8%] flex flex-col items-center p-4 sm:w-10/12 lg:w-8/12"
     >
-        <Head title="Inicio" />
         <div
             class="mb-4 flex w-1/2 items-baseline justify-center space-x-2 pb-4"
         >
@@ -50,7 +47,7 @@ const selectSuggestion = (word: string) => {
         >
             <ul class="divide-y divide-gray-200">
                 <li v-if="isLoading" class="px-4 py-2">Carregando...</li>
-                <li v-else-if="!hasSuggestions" class="px-4 py-2">
+                <li v-else-if="!suggestions?.length" class="px-4 py-2">
                     Nenhuma sugestão encontrada
                 </li>
                 <li

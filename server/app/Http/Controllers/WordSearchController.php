@@ -19,18 +19,18 @@ class WordSearchController extends Controller
     public function search(Request $request)
     {
         $request->validate([
-            'query' => ['required', 'string', 'max:46', 'min:3', 'regex:/^[a-zA-ZÀ-ú]+$/'],
+            'query' => ['required', 'string', 'max:46', 'min:2', 'regex:/^[a-zA-ZÀ-ú]+$/'],
         ]);
 
         $query = $request->input('query');
 
         $suggestions = $this->wordSuggestionService->getSuggestionsCached($query);
 
+
         return Inertia::render(
             'public/WordSearch',
             [
                 "suggestions" => $suggestions ?? [$query],
-                "hasSuggestions" =>  !$suggestions || count($suggestions) > 0,
             ]
         );
     }
