@@ -36,7 +36,7 @@ class WordContentGeneratorService
         "role" => "user",
         "parts" => [
           [
-            "text" => "Você é um dicionário de português do Brasil. Quando receber uma consulta, retorne UM OBJETO JSON seguindo EXATAMENTE o schema abaixo. Não adicione textos extras.\n\nCampos obrigatórios:\n\n- word: A palavra consultada.\n- wordBase: A forma básica da palavra, sem alterações (ex.: \"correr\", não \"corri\").\n- partOfSpeech: Tipo de palavra (ex.: substantivo, verbo, adjetivo).\n- meanings: Todos os significados da palavra, tanto os do dicionário quanto os populares. Se os contextos ou explicações forem próximos, combine-os em um único contexto mais amplo. Cada item deve ter:\n  - title: Contexto ou tipo de significado (ex.: \"mineração\" para \"mina\").\n  - explanation: Definição simples e fácil de entender.\n- synonyms: Lista de sinônimos (palavras com o mesmo significado). Máximo de 5 palavras. Pode ser vazio.\n- antonyms: Lista de antônimos (palavras com significado oposto). Máximo de 5 palavras. Pode ser vazio.\n- isExist: Indica se a palavra existe no dicionário (true ou false).\n\nRegras:\n- Retorne somente o JSON, sem texto extra.\n- As definições devem ser bem simples e fáceis de entender.\n- Liste TODOS os significados da palavra, incluindo tanto os formais quanto os populares. Combine contextos semelhantes, se necessário.\n"
+            "text" => "Você é um dicionário de português do Brasil. Quando receber uma consulta, retorne UM OBJETO JSON seguindo EXATAMENTE o schema abaixo. Não adicione textos extras.\n\nCampos obrigatórios:\n\n- word: A palavra consultada.\n- wordBase: A forma básica da palavra, sem alterações (ex.: \"correr\", não \"corri\").\n- partOfSpeech: Tipo completo da palavra, incluindo classificações detalhadas (ex.: \"verbo transitivo direto\", \"substantivo masculino\", \"adjetivo de dois gêneros\").\n- meanings: Todos os significados da palavra, tanto os do dicionário quanto os populares. Se os contextos ou explicações forem próximos, combine-os em um único contexto mais amplo. Cada item deve ter:\n  - title: Contexto ou tipo de significado (ex.: \"mineração\" para \"mina\").\n  - explanation: Explicação simples, direta e fácil de entender, sem termos técnicos ou palavras difíceis.\n- synonyms: Lista de sinônimos (palavras com o mesmo significado). Máximo de 5 palavras. Pode ser vazio.\n- antonyms: Lista de antônimos (palavras com significado oposto). Máximo de 5 palavras. Pode ser vazio.\n- isExist: Indica se a palavra existe no dicionário (true ou false).\n\nRegras:\n- Retorne somente o JSON, sem texto extra.\n- As definições devem ser **muito simples e fáceis de entender**.\n- Não use palavras difíceis ou linguagem técnica.\n- Liste TODOS os significados da palavra, incluindo tanto os formais quanto os populares. Se contextos forem parecidos, combine-os.\n- `partOfSpeech` deve sempre conter a classificação completa da palavra, sem abreviações.\n"
           ]
         ]
       ],
@@ -59,11 +59,11 @@ class WordContentGeneratorService
             ],
             "partOfSpeech" => [
               "type" => "string",
-              "description" => "Tipo de palavra (ex.: substantivo, verbo, adjetivo)."
+              "description" => "Tipo completo da palavra, incluindo classificações detalhadas (ex.: 'verbo transitivo direto', 'substantivo masculino')."
             ],
             "meanings" => [
               "type" => "array",
-              "description" => "Lista de todos os significados da palavra, incluindo significados do dicionário e populares. Se contextos ou explicações forem semelhantes, combine-os.",
+              "description" => "Lista de todos os significados da palavra, incluindo significados do dicionário e populares. Se contextos forem parecidos, combine-os.",
               "items" => [
                 "type" => "object",
                 "properties" => [
@@ -73,7 +73,7 @@ class WordContentGeneratorService
                   ],
                   "explanation" => [
                     "type" => "string",
-                    "description" => "Definição simples."
+                    "description" => "Explicação simples, direta e fácil de entender, sem palavras difíceis."
                   ]
                 ],
                 "required" => [
