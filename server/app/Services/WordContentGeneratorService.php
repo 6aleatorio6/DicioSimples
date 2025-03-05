@@ -41,7 +41,7 @@ class WordContentGeneratorService
         ]
       ],
       "generationConfig" => [
-        "temperature" => 0.3,
+        "temperature" => 0.5,
         "topK" => 40,
         "topP" => 0.95,
         "maxOutputTokens" => 8192,
@@ -73,7 +73,7 @@ class WordContentGeneratorService
                   ],
                   "explanation" => [
                     "type" => "string",
-                    "description" => "Explicação simples, direta e fácil de entender, sem palavras difíceis."
+                    "description" => "Explicação simples e fácil de entender, sem palavras difíceis."
                   ]
                 ],
                 "required" => [
