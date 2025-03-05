@@ -29,7 +29,13 @@ const selectSuggestion = (word: string) => {
 </script>
 
 <template>
-    <Head title="Inicio" />
+    <Head>
+        <title>Inicio</title>
+        <meta
+            name="description"
+            content="No DicioSimples, pesquise palavras e encontre definições claras e objetivas de forma rápida e prática."
+        />
+    </Head>
     <div
         class="mx-auto mt-[8%] flex flex-col items-center p-4 sm:w-10/12 lg:w-8/12"
     >
