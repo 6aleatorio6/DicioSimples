@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WordContentController;
 use App\Http\Controllers\WordSearchController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+Route::get('/sitemap.xml', SitemapController::class);
 
 Route::get('/', [WordSearchController::class, 'show'])->name('home');
 Route::post('/', [WordSearchController::class, 'search'])->name('home.search');
