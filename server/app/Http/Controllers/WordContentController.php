@@ -8,7 +8,7 @@ use App\Services\WordContentGeneratorService;
 use App\Services\WordSuggestionService;
 use Inertia\Inertia;
 use Illuminate\Contracts\Cache\Repository as Cache;
-
+use Illuminate\Http\Request;
 
 class WordContentController extends Controller
 {
@@ -49,19 +49,30 @@ class WordContentController extends Controller
     }
 
 
+    private function inclementViewCount(string $wordName, string $ipAddress)
+    {
+        $cacheKey = 'word_' . $wordName . '_viewed_by_' . $ipAddress;
 
-    public function __invoke(string $word)
+        if (!$this->cache->has($cacheKey)) {
+            $this->word->where('word', $wordName)->increment('views');
+            $this->cache->put($cacheKey, true, 3600); // Cache for 1 hour
+        }
+    }
+
+    public function __invoke(string $wordName, Request $request)
     {
         // Validate word
-        if (!$this->cache->has('word_' . $word)) {
-            $suggestions = $this->wordSuggestionService->getSuggestionsCached($word);
-            if ($suggestions) throw new InvalidWordException($word, $suggestions);
+        if (!$this->cache->has('word_' . $wordName)) {
+            $suggestions = $this->wordSuggestionService->getSuggestionsCached($wordName);
+            if ($suggestions) throw new InvalidWordException($wordName, $suggestions);
         }
 
         $wordContent = $this->cache->rememberForever(
-            'word_' . $word,
-            fn() => $this->getWordContent($word)
+            'word_' . $wordName,
+            fn() => $this->getWordContent($wordName)
         );
+
+        $this->inclementViewCount($wordName, $request->ip());
 
         return Inertia::render('public/WordContent', $wordContent);
     }
