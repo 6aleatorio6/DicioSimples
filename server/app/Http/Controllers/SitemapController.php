@@ -40,7 +40,7 @@ class SitemapController extends Controller
 
             // Armazenar o sitemap em cache por 24 horas
             $sitemap = $xml->asXML();
-            $cache->put($cacheKey, $sitemap, now()->addDay());
+            $cache->put($cacheKey, $sitemap, now()->hour(env('SITEMAP_CACHE_HOURS', 24)));
         }
 
         // Retornar o XML gerado ou em cache
