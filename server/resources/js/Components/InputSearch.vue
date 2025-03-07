@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-defineProps<{
-    submit: (query: string | void) => void;
-    inputSearch: (query: string) => void;
-    isLoading: boolean;
-}>();
+const emit = defineEmits<{ input: [string]; down: []; up: []; enter: [] }>();
+
+defineProps<{ isLoading: boolean }>();
 
 const query = ref('');
 </script>
@@ -13,11 +11,14 @@ const query = ref('');
 <template>
     <div class="relative w-full">
         <input
+            v-bind="$attrs"
+            @input="() => emit('input', query)"
+            @keydown.down.prevent="() => emit('down')"
+            @keydown.up.prevent="() => emit('up')"
+            @keydown.enter.prevent="() => emit('enter')"
             type="text"
             v-model="query"
             max="46"
-            @input="inputSearch(query)"
-            @keyup.enter="submit(query)"
             :disabled="isLoading"
             placeholder="Pesquisar "
             class="w-full rounded-t-lg px-4 py-2 pr-10 shadow ring-transparent focus:outline-none sm:px-6 sm:py-3"
