@@ -20,7 +20,6 @@ class WordContentGeneratorService
 
     $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=' . $this->apiKey;
 
-
     $body = [
       "contents" => [
         [
@@ -36,7 +35,7 @@ class WordContentGeneratorService
         "role" => "user",
         "parts" => [
           [
-            "text" => "Você é um dicionário de português do Brasil. Quando receber uma consulta, retorne UM OBJETO JSON seguindo EXATAMENTE o schema abaixo. Não adicione textos extras.\n\nCampos obrigatórios:\n\n- word: A palavra consultada.\n- wordBase: A forma básica da palavra, sem alterações (ex.: \"correr\", não \"corri\").\n- partOfSpeech: Tipo completo da palavra, incluindo classificações detalhadas (ex.: \"verbo transitivo direto\", \"substantivo masculino\", \"adjetivo de dois gêneros\").\n- meanings: Todos os significados da palavra, tanto os do dicionário quanto os populares. Se os contextos ou explicações forem próximos, combine-os em um único contexto mais amplo. Cada item deve ter:\n  - title: Contexto ou tipo de significado (ex.: \"mineração\" para \"mina\").\n  - explanation: Explicação simples, direta e fácil de entender, sem termos técnicos ou palavras difíceis.\n- synonyms: Lista de sinônimos (palavras com o mesmo significado). Máximo de 5 palavras. Pode ser vazio.\n- antonyms: Lista de antônimos (palavras com significado oposto). Máximo de 5 palavras. Pode ser vazio.\n- isExist: Indica se a palavra existe no dicionário (true ou false).\n\nRegras:\n- Retorne somente o JSON, sem texto extra.\n- As definições devem ser **muito simples e fáceis de entender**.\n- Não use palavras difíceis ou linguagem técnica.\n- Liste TODOS os significados da palavra, incluindo tanto os formais quanto os populares. Se contextos forem parecidos, combine-os.\n- `partOfSpeech` deve sempre conter a classificação completa da palavra, sem abreviações.\n"
+            "text" => "Você é um dicionário de português do Brasil. Ao receber uma consulta, retorne um **objeto JSON** que siga **exatamente** o schema abaixo. Não adicione texto extra, apenas o JSON.\n\n**Regras:**\n- As definições devem ser **claras e de fácil leitura**.\n- **Evite palavras difíceis ou termos técnicos**, prefira palavras fáceis e populares.\n- Liste **todos os significados da palavra**, incluindo usos formais e populares. **Se contextos forem parecidos, combine-os**.\n- `partOfSpeech` deve conter **a classificação completa**, sem abreviações.\n- Máximo de **5 sinônimos e 5 antônimos**, cada um com **apenas uma palavra**, sem espaços ou gírias compostas.\n- `title` dentro de `meanings` deve ser **apenas uma palavra ou nome**, representando o contexto da explicação.\n- Cada explicação deve ter um contexto, indicado pelo campo `title`.\n- `wordBase` deve ser **o lema da palavra consultada** (ex.: `word: pamonhas`, `wordBase: pamonha`).\n- A explicação deve ser **coerente e de fácil leitura**, utilizando palavras fáceis e populares, sem ser vaga ou excessivamente ampla.\n- As explicações dentro de `meanings` devem ser **ordenadas das mais populares para as menos conhecidas**.\n\n"
           ]
         ]
       ],
@@ -55,25 +54,25 @@ class WordContentGeneratorService
             ],
             "wordBase" => [
               "type" => "string",
-              "description" => "Forma básica da palavra, sem mudanças."
+              "description" => "O lema da palavra consultada (ex.: 'pamonhas' → 'pamonha')."
             ],
             "partOfSpeech" => [
               "type" => "string",
-              "description" => "Tipo completo da palavra, incluindo classificações detalhadas (ex.: 'verbo transitivo direto', 'substantivo masculino')."
+              "description" => "Classificação completa da palavra (ex.: 'verbo transitivo direto', 'substantivo masculino')."
             ],
             "meanings" => [
               "type" => "array",
-              "description" => "Lista de todos os significados da palavra, incluindo significados do dicionário e populares. Se contextos forem parecidos, combine-os.",
+              "description" => "Lista de todos os significados, incluindo formais e populares. Se forem parecidos, combine-os. Ordenados das mais populares para as menos conhecidas.",
               "items" => [
                 "type" => "object",
                 "properties" => [
                   "title" => [
                     "type" => "string",
-                    "description" => "Contexto ou tipo de significado."
+                    "description" => "Contexto da explicação (apenas uma palavra ou nome)."
                   ],
                   "explanation" => [
                     "type" => "string",
-                    "description" => "Explicação simples e fácil de entender, sem palavras difíceis."
+                    "description" => "Explicação coerente e de fácil leitura, utilizando palavras fáceis e populares, sem ser vaga ou excessivamente ampla."
                   ]
                 ],
                 "required" => [
@@ -84,21 +83,21 @@ class WordContentGeneratorService
             ],
             "synonyms" => [
               "type" => "array",
-              "description" => "Sinônimos. Máximo de 5 palavras.",
+              "description" => "Sinônimos (máximo de 5, cada item deve ser uma palavra única, sem espaços ou gírias compostas). Pode estar vazio.",
               "items" => [
                 "type" => "string"
               ]
             ],
             "antonyms" => [
               "type" => "array",
-              "description" => "Antônimos. Máximo de 5 palavras.",
+              "description" => "Antônimos (máximo de 5, cada item deve ser uma palavra única, sem espaços ou gírias compostas). Pode estar vazio.",
               "items" => [
                 "type" => "string"
               ]
             ],
             "isExist" => [
               "type" => "boolean",
-              "description" => "Indica se a palavra existe (true ou false)."
+              "description" => "Indica se a palavra existe no dicionário (true ou false)."
             ]
           ],
           "required" => [
