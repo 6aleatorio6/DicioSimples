@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-
 /**
  * 
  *
@@ -75,19 +74,8 @@ class Word extends Model
 		return $this->belongsToMany(Word::class, 'word_antonym', 'word_id', 'antonym_id');
 	}
 
-
-
-
 	protected function setMeaningsAttribute($value)
 	{
-		$validator = Validator::make(['meanings' => $value], [
-			'meanings' => 'array',
-			'meanings.*.explanation' => 'required|string',
-			'meanings.*.title' => 'required|string',
-		]);
-
-		if ($validator->fails())  new ValidationException($validator);
-
 		$this->attributes['meanings'] = json_encode($value);
 	}
 
@@ -97,7 +85,15 @@ class Word extends Model
 	}
 
 
+	public function toArray()
+	{
+		$array = parent::toArray();
 
+		// Converte as chaves para camelCase
+		return collect($array)->mapWithKeys(function ($value, $key) {
+			return [Str::camel($key) => $value];
+		})->toArray();
+	}
 
 	/** @param "Synonyms"|"Antonyms" $relation */
 	public function createAndAttachWords(string $relation, array $wordNames)
@@ -127,13 +123,33 @@ class Word extends Model
 	}
 
 
-	public function toArray()
+	public function getWordFull(string $wordName)
 	{
-		$array = parent::toArray();
+		return $this->with(['baseForm:id,word', 'wordSynonyms:id,word', 'wordAntonyms:id,word'])
+			->whereWord($wordName)
+			->whereNotNull('meanings')
+			->first();
+	}
 
-		// Converte as chaves para camelCase
-		return collect($array)->mapWithKeys(function ($value, $key) {
-			return [Str::camel($key) => $value];
-		})->toArray();
+
+	/**
+	 * @param array{
+	 *     word: string,
+	 *     wordBase: string,
+	 *     partOfSpeech: string,
+	 *     meanings: array<array{ title: string, explanation: string }>,
+	 *     synonyms: string[],
+	 *     antonyms: string[],
+	 *     isExist: bool
+	 * } $wordContent
+	 */
+	public function createWord(array $wordContent)
+	{
+		$wordInstance = self::updateOrCreate(['word' => $wordContent['word']], $wordContent);
+		$wordInstance->createAndAttachWords("Antonyms", $wordContent['antonyms']);
+		$wordInstance->createAndAttachWords("Synonyms", $wordContent['synonyms']);
+
+		$wordBaseId = self::firstOrcreate(['word' => $wordContent['wordBase']]);
+		$wordInstance->baseForm()->associate($wordBaseId);
 	}
 }
