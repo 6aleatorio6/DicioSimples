@@ -2,11 +2,11 @@
 
 namespace App\Jobs;
 
-use App\Exceptions\InvalidWordException;
 use App\Models\Word;
 use App\Services\GeminiWordGenerationService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -25,21 +25,20 @@ class GenerateWordContent implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(GeminiWordGenerationService $wordGenerateContent, Word $word): void
+    public function handle(GeminiWordGenerationService $wordGenerateContent, Word $word)
     {
         // gera 
         $wordContent = $wordGenerateContent->generate($this->wordName);
 
-        if (!$wordContent['isExist']) {
-            $word->insert(['word' => $this->wordName, 'isExist' => false]);
-            return;
-        }
+        if (!$wordContent['isExist']) return $word->insert(['word' => $this->wordName, 'isExist' => false]);
 
         // válida
         $this->validateContentOrThrow($wordContent);
 
         // salva
         $word->createWord($wordContent);
+
+        Log::info('Palavra gerada com sucesso.', ['word' => $this->wordName]);
     }
 
     private function validateContentOrThrow(array $WordContent): void
