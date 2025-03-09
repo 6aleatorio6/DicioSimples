@@ -4,22 +4,34 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 
-class WordContentGeneratorService
+class GeminiWordGenerationService
 {
 
-  private $apiKey;
+  private string $url;
 
   public function __construct()
   {
-    $this->apiKey = env('GEMINI_KEY'); // Defina sua chave da API no .env
+    $gemini_key = env('GEMINI_KEY');
+    if (!$gemini_key) throw new \Exception('GEMINI_KEY not found in .env');
+
+
+    $this->url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=' .     $gemini_key;
   }
 
 
-  private function fetch(string $word): array
+  /**
+   * @return array{
+   *     word: string,
+   *     wordBase: string,
+   *     partOfSpeech: string,
+   *     meanings: array<array{ title: string, explanation: string }>,
+   *     synonyms: string[],
+   *     antonyms: string[],
+   *     isExist: bool
+   * }
+   */
+  public function generate(string $word): array
   {
-
-    $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=' . $this->apiKey;
-
     $body = [
       "contents" => [
         [
@@ -111,30 +123,13 @@ class WordContentGeneratorService
       ]
     ];
 
-    $response = Http::retry(3, 300)->throw()->post($url, $body);
+    $response  = Http::retry(3, 300)->throw()->post($this->url, $body);
 
     $response = $response->json();
 
     $wordContentJson = $response['candidates'][0]['content']['parts'][0]['text'];
 
-    return json_decode($wordContentJson, true);
-  }
-
-  /**
-   * @return array{
-   *     word: string,
-   *     wordBase: string,
-   *     partOfSpeech: string,
-   *     meanings: array<array{ title: string, explanation: string }>,
-   *     synonyms: string[],
-   *     antonyms: string[],
-   *     isExist: bool
-   * }
-   */
-  public function generate(string $word): array
-  {
-    $wordContent = $this->fetch($word);
-
+    $wordContent = json_decode($wordContentJson, true);
 
     return $wordContent;
   }
