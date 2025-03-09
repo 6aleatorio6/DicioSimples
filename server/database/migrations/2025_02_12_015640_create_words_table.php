@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('partOfSpeech')->nullable();
             $table->foreignId('base_form')->nullable()->constrained('words');
             $table->json('meanings')->nullable();
+            $table->boolean('isExist')->default(true);
             $table->integer('views')->default(0);
         });
 

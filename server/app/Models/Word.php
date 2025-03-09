@@ -50,7 +50,8 @@ class Word extends Model
 	protected $fillable = [
 		'word',
 		'meanings',
-		'partOfSpeech'
+		'partOfSpeech',
+		'isExist',
 	];
 
 	protected $hidden = [
