@@ -3,53 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidWordException;
+use App\Http\Requests\WordContentRequest;
+use App\Jobs\GenerateWordContent;
 use App\Models\Word;
 use App\Services\WordContentGeneratorService;
 use App\Services\WordSuggestionService;
 use Inertia\Inertia;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Queue;
 
 class WordContentController extends Controller
 {
     function __construct(
-        private WordContentGeneratorService $wordMeaningGeneratorService,
         private WordSuggestionService $wordSuggestionService,
         private Word $word,
         private Cache $cache
     ) {}
 
 
-
-
-    private function getWordContent(string $wordName)
-    {
-        $wordContent = $this->word->with(['baseForm:id,word', 'wordSynonyms:id,word', 'wordAntonyms:id,word'])
-            ->where('word', '=', $wordName)
-            ->whereNotNull('meanings')
-            ->first();
-
-
-        if (!$wordContent) {
-            $wordContentGenereated = $this->wordMeaningGeneratorService->generate($wordName);
-
-            if (!$wordContentGenereated['isExist']) throw new InvalidWordException($wordName, []);
-
-            $wordContent = $this->word->updateOrCreate(['word' => $wordName], $wordContentGenereated);
-
-            $wordContent->createAndAttachWords("Antonyms", $wordContentGenereated['antonyms']);
-            $wordContent->createAndAttachWords("Synonyms", $wordContentGenereated['synonyms']);
-            $wordContent->baseForm()->associate($this->word->firstOrcreate(['word' => $wordContentGenereated['wordBase']]));
-
-            $wordContent->load(['baseForm:id,word', 'wordSynonyms:id,word', 'wordAntonyms:id,word']);
-        }
-
-
-        return $wordContent;
-    }
-
-
-    private function inclementViewCount(string $wordName, string $ipAddress)
+    private function incrementViewCount(string $wordName, string $ipAddress)
     {
         $cacheKey = 'word_' . $wordName . '_viewed_by_' . $ipAddress;
 
@@ -59,21 +32,47 @@ class WordContentController extends Controller
         }
     }
 
-    public function __invoke(string $wordName, Request $request)
+    public function getWordContent(string $wordName)
     {
-        // Validate word
-        if (!$this->cache->has('word_' . $wordName)) {
-            $suggestions = $this->wordSuggestionService->getSuggestionsCached($wordName);
-            if ($suggestions) throw new InvalidWordException($wordName, $suggestions);
+        $cacheKey = 'word_' . $wordName;
+
+        $wordContentCached = $this->cache->get($cacheKey);
+        $wordContent = $wordContentCached ?? $this->word->getWordFull($wordName);
+
+        $validForCache = $wordContent && ($wordContent['meanings'] || !$wordContent['isExist']);
+        if (!$wordContentCached && $validForCache) $this->cache->put($cacheKey, $wordContent, 3600 * 24 * 3); // Cache for 3 days
+
+
+        if (!$wordContent) {
+            $this->cache->remember(
+                $cacheKey  . '_dispatch',
+                3600 * 3, // Cache for 3 hours
+                fn() => GenerateWordContent::dispatch($wordName) && true
+            );
         }
 
-        $wordContent = $this->cache->rememberForever(
-            'word_' . $wordName,
-            fn() => $this->getWordContent($wordName)
-        );
+        return $wordContent;
+    }
 
-        $this->inclementViewCount($wordName, $request->ip());
 
+
+    public function __invoke(string $wordName, Request $request)
+    {
+        $suggestions = $this->wordSuggestionService->getSuggestionsCached($wordName);
+        if ($suggestions) throw new InvalidWordException($wordName, $suggestions);
+
+        $wordContent = $this->getWordContent($wordName);
+        if ($wordContent && !$wordContent['isExist']) throw new InvalidWordException($wordName, []);
+
+
+
+        if (!$wordContent) {
+            return Inertia::render('public/WordContentGenerate', [
+                'word' => $wordName,
+            ])->toResponse($request)->setStatusCode(202);
+        }
+
+        $this->incrementViewCount($wordName, $request->ip());
         return Inertia::render('public/WordContent', $wordContent);
     }
 }
