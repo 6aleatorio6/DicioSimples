@@ -10,7 +10,7 @@ defineProps<{
 
 <template>
     <div class="">
-        <div class="flex min-h-[99vh] flex-col bg-body font-inter text-text">
+        <div class="flex min-h-[98.4vh] flex-col bg-body font-inter text-text">
             <header
                 class="flex flex-col items-center justify-between bg-bodySec px-4 md:py-5 lg:grid lg:grid-cols-6"
             >
@@ -48,37 +48,37 @@ defineProps<{
         </div>
 
         <footer class="w-full bg-bodySec">
-            <div class="mx-auto max-w-4xl">
+            <div class="mx-auto max-w-4xl px-4">
                 <!--Grid-->
                 <div
-                    class="flex flex-col items-center justify-between gap-8 py-8 lg:flex-row"
+                    class="flex flex-col items-center justify-between py-8 sm:flex-row"
                 >
-                    <div>
-                        <ApplicationLogo :width="80" />
-                        <div class="mt-2 flex h-8 justify-between">
+                    <div class="flex w-full justify-between sm:block sm:w-auto">
+                        <ApplicationLogo width="100" />
+                        <div
+                            class="flex w-auto flex-col justify-between sm:w-full sm:flex-row"
+                        >
                             <a
                                 href="https://www.linkedin.com/in/leonardo-l-felix"
-                                class="flex items-center justify-center rounded-full hover:opacity-30"
                             >
                                 <img
                                     src="/img/linkedin-icon.png"
                                     alt="LinkedIn"
-                                    class="h-full"
+                                    class="h-10 sm:h-8"
                                 />
                             </a>
                             <a
-                                href="https://github.com/6aleatorio6"
-                                class="flex items-center justify-center rounded-full hover:opacity-30"
+                                href="https://github.com/6aleatorio6/DicioSimples"
                             >
                                 <img
                                     src="/img/github-icon.svg"
                                     alt="GitHub"
-                                    class="h-full"
+                                    class="h-10 sm:h-8"
                                 />
                             </a>
                         </div>
                     </div>
-                    <p class="text-center text-lg sm:w-1/2 lg:w-3/12">
+                    <p class="pt-4 text-center text-lg sm:w-3/12 sm:pt-0">
                         O DicioSimples oferece definições claras e objetivas
                         para facilitar o seu entendimento.
                     </p>
