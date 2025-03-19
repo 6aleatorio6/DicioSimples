@@ -12,20 +12,20 @@ defineProps<{
     <div class="">
         <div class="flex min-h-[99vh] flex-col bg-body font-inter text-text">
             <header
-                class="flex flex-col items-center justify-between gap-4 bg-bodySec px-4 py-4 sm:flex-row lg:grid lg:grid-cols-6"
+                class="flex flex-col items-center justify-between bg-bodySec px-4 md:py-5 lg:grid lg:grid-cols-6"
             >
                 <Link
                     href="/"
-                    class="flex flex-col items-center pt-4 sm:items-start lg:col-span-4 lg:col-start-2 lg:items-center"
+                    class="flex flex-col items-center py-3 md:py-0 lg:col-span-4 lg:col-start-2 lg:items-center"
                 >
                     <h1
-                        class="py-3 font-Jomhuria text-6xl !leading-3 sm:text-7xl lg:text-8xl"
+                        class="flex pt-2 font-Jomhuria text-7xl !leading-10 md:text-8xl"
                     >
-                        <span class="text-text">Dicio</span>
+                        <span class="h-fit text-text">Dicio</span>
                         <span class="text-textSec">Simples</span>
                     </h1>
                     <h2
-                        class="text-center text-lg text-textSec sm:text-left sm:text-xl lg:text-lg"
+                        class="hidden text-center text-lg text-textSec md:block md:text-xl"
                     >
                         Dicionário com explicações simples e fáceis de
                         compreender
