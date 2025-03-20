@@ -21,7 +21,7 @@ defineProps<{
                     <h1
                         class="flex pt-2 font-Jomhuria text-7xl !leading-10 md:text-8xl"
                     >
-                        <span class="h-fit text-text">Dicio</span>
+                        <span style="color: #e6c45c">Dicio</span>
                         <span class="text-textSec">Simples</span>
                     </h1>
                     <h2
@@ -47,7 +47,7 @@ defineProps<{
             </main>
         </div>
 
-        <footer class="w-full bg-bodySec">
+        <footer class="w-full bg-bodySec text-textSec">
             <div class="mx-auto max-w-4xl px-4">
                 <!--Grid-->
                 <div
@@ -56,7 +56,7 @@ defineProps<{
                     <div class="flex w-full justify-between sm:block sm:w-auto">
                         <ApplicationLogo width="100" />
                         <div
-                            class="flex w-auto flex-col justify-between sm:w-full sm:flex-row"
+                            class="flex w-auto flex-col-reverse justify-between rounded bg-body/55 p-1 sm:w-full sm:flex-row"
                         >
                             <a
                                 href="https://www.linkedin.com/in/leonardo-l-felix"
@@ -64,7 +64,7 @@ defineProps<{
                                 <img
                                     src="/img/linkedin-icon.png"
                                     alt="LinkedIn"
-                                    class="h-10 sm:h-8"
+                                    class="h-9 sm:h-7"
                                 />
                             </a>
                             <a
@@ -73,7 +73,7 @@ defineProps<{
                                 <img
                                     src="/img/github-icon.svg"
                                     alt="GitHub"
-                                    class="h-10 sm:h-8"
+                                    class="mx-auto h-9 sm:h-7"
                                 />
                             </a>
                         </div>
@@ -85,19 +85,19 @@ defineProps<{
                 </div>
                 <!--Grid-->
 
-                <div class="border-t border-gray-700 py-3 text-center">
+                <div class="border-t border-bodyTri py-3 text-center">
                     <div class="flex flex-col items-center">
                         <span class="">
                             © 2025
                             <a
-                                class="text-blue-500 underline"
+                                class="text-blue-300 underline"
                                 href="https://www.linkedin.com/in/leonardo-l-felix"
                             >
                                 Leonardo L. Felix.
                             </a>
                             Todos os direitos reservados.
                         </span>
-                        <span class="text-sm text-gray-500">
+                        <span class="text-sm text-textSec-400">
                             Laravel v{{ laravelVersion }} (PHP v{{
                                 phpVersion
                             }})

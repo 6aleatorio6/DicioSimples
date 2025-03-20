@@ -18,7 +18,7 @@ const isLastItem = (i: number, add: number) =>
             {{ emptyListText }}
         </li>
         <template v-else>
-            <span class="text-textSec-700 me-1">{{ startText }}</span>
+            <span class="me-1 text-text-500">{{ startText }}</span>
             <li
                 v-for="(item, idx) in listWord"
                 :key="idx"

@@ -53,8 +53,8 @@ function createDescription(): string {
 
     <section class="mt-8">
         <h1 class="text-5xl font-bold uppercase">{{ word }}</h1>
-        <div class="my-1 border-b-2 border-gray-400" />
-        <p v-if="partOfSpeech" class="ms-2 text-lg">
+        <div class="my-1 border-b-2 border-bodySec" />
+        <p v-if="partOfSpeech" class="ms-2 text-lg text-text-400">
             {{ capWord(partOfSpeech) }}
             <template v-if="hasBaseForm">
                 de
@@ -73,11 +73,11 @@ function createDescription(): string {
             class="mt-2 text-lg"
         >
             <h3
-                class="w-fit rounded-lg text-lg font-bold capitalize text-textSec-700"
+                class="w-fit rounded-lg text-lg font-bold capitalize text-text-500"
             >
                 {{ meaning.title }}
             </h3>
-            <p class="text-textSec-500">{{ meaning.explanation }}</p>
+            <p class="ms-1 text-text-500">- {{ meaning.explanation }}</p>
         </div>
     </SectionContent>
 
