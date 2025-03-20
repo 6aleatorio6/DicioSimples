@@ -50,57 +50,61 @@ function createDescription(): string {
         <title>{{ capWord(word) }}</title>
         <meta name="description" :content="createDescription()" />
     </Head>
-
-    <section class="mt-8">
-        <h1 class="text-5xl font-bold uppercase">{{ word }}</h1>
-        <div class="my-1 border-b-2 border-bodySec" />
-        <p v-if="partOfSpeech" class="ms-2 text-lg text-text-400">
-            {{ capWord(partOfSpeech) }}
-            <template v-if="hasBaseForm">
-                de
-                <Link :href="route('word', baseForm!.word)">
-                    <span class="text-blue-800 underline">{{
-                        baseFormCap
-                    }}</span>
-                </Link>
-            </template>
-        </p>
-    </section>
-    <SectionContent title="Definições">
-        <div
-            v-for="(meaning, index) in meanings"
-            :key="index"
-            class="mt-2 text-lg"
-        >
-            <h3
-                class="w-fit rounded-lg text-lg font-bold capitalize text-text-500"
+    <div class="flex flex-col gap-2">
+        <section class="mt-16">
+            <h1 class="text-5xl font-bold uppercase">{{ word }}</h1>
+            <div class="my-1 border-b-2 border-bodySec" />
+            <p v-if="partOfSpeech" class="ms-2 text-lg text-text-400">
+                {{ capWord(partOfSpeech) }}
+                <template v-if="hasBaseForm">
+                    de
+                    <Link :href="route('word', baseForm!.word)">
+                        <span class="text-blue-800 underline">{{
+                            baseFormCap
+                        }}</span>
+                    </Link>
+                </template>
+            </p>
+        </section>
+        <SectionContent title="Explicações">
+            <div
+                v-for="(meaning, index) in meanings"
+                :key="index"
+                class="mt-3 text-lg"
             >
-                {{ meaning.title }}
-            </h3>
-            <p class="ms-1 text-text-500">- {{ meaning.explanation }}</p>
-        </div>
-    </SectionContent>
+                <h3
+                    class="w-fit rounded-2xl bg-bodySec px-2 text-sm font-bold capitalize text-textSec"
+                >
+                    {{ meaning.title }}
+                </h3>
+                <p class="text-text-500">{{ meaning.explanation }}</p>
+            </div>
+        </SectionContent>
 
-    <SectionContent v-if="hasSynonyms" title="Sinônimos">
-        <List
-            startText="Palavras com significado semelhante: "
-            emptyListText="Nenhum sinônimo disponível para esta palavra"
-            :listWord="wordSynonyms"
-            title="Sinônimos"
-        />
-    </SectionContent>
+        <SectionContent v-if="hasSynonyms" title="Sinônimos">
+            <List
+                startText="Palavras com significado semelhante: "
+                emptyListText="Nenhum sinônimo disponível para esta palavra"
+                :listWord="wordSynonyms"
+                title="Sinônimos"
+            />
+        </SectionContent>
 
-    <SectionContent v-if="hasAntonyms" title="Antônimos">
-        <List
-            startText="Palavras com significado oposto: "
-            emptyListText="Nenhum antônimo disponível para esta palavra"
-            :listWord="wordAntonyms"
-            title="Antônimos"
-        />
-    </SectionContent>
+        <SectionContent v-if="hasAntonyms" title="Antônimos">
+            <List
+                startText="Palavras com significado oposto: "
+                emptyListText="Nenhum antônimo disponível para esta palavra"
+                :listWord="wordAntonyms"
+                title="Antônimos"
+            />
+        </SectionContent>
+    </div>
 
-    <Link :href="route('home')" class="m-auto my-10 w-8/12">
-        <PrimaryButton class="h-14 w-full justify-center text-2xl">
+    <Link :href="route('home')" class="m-auto mb-10 mt-20 w-7/12">
+        <PrimaryButton
+            class="w-full justify-center py-7"
+            style="font-size: 1.7rem"
+        >
             Buscar outra palavra
         </PrimaryButton>
     </Link>
