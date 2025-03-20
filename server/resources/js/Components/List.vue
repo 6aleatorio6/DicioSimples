@@ -26,7 +26,7 @@ const isLastItem = (i: number, add: number) =>
             >
                 <Link
                     :href="route('word', item.word.toLowerCase())"
-                    class="text-blue-700 underline"
+                    class="capitalize text-blue-700 underline"
                 >
                     {{ item.word }}
                 </Link>
