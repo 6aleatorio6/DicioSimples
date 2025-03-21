@@ -7,6 +7,7 @@
 # 📖 DicioSimples - Explicações Simples para Palavras
 
 > Esse projeto está sendo desenvolvido com foco no aprendizado das tecnologias Laravel, Inertia, Vue e Tailwind CSS.
+
 DicioSimples é um dicionário que apresenta definições simplificadas das palavras, utilizando a API do Gemini para gerar essas definições e as serializando no banco de dados.
 
 - **Hospedagem:** O projeto está disponível online através do plano estudante da Heroku: [DicioSimples](https://dicio-simples-ca91bbd4773b.herokuapp.com/)
