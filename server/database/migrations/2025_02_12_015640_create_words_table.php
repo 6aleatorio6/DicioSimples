@@ -34,20 +34,6 @@ return new class extends Migration
             $table->foreignId('antonym_id')->constrained('words'); #->cascadeOnDelete();
             $table->timestamps();
         });
-
-        // Schema::create('word_inflection', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->foreignId('word_id')->constrained()->onDelete('cascade');
-        //     $table->string('inflected_form'); // A forma inflexionada da palavra
-
-        //     // Colunas enum para detalhar a flexão do verbo
-        //     $table->enum('tense', ['present', 'past', 'future'])->nullable();
-        //     $table->enum('mood', ['indicative', 'subjunctive', 'imperative'])->nullable();
-        //     $table->enum('person', ['first', 'second', 'third'])->nullable();
-        //     $table->enum('number', ['singular', 'plural'])->nullable();
-
-        //     $table->timestamps();
-        // });
     }
 
     /**
@@ -55,7 +41,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Schema::dropIfExists('word_inflection');
         Schema::dropIfExists('word_synonym');
         Schema::dropIfExists('word_antonym');
         Schema::dropIfExists('words');
