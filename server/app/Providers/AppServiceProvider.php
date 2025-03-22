@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\WordMeaningGeneratorService;
-use App\Services\WordSuggestionService;
+use App\Adapters\WordSuggestionAdapter;
+use App\Adapters\WordMeaningGeneratorAdapter;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
 
 
     public $singletons = [
-        WordSuggestionService::class => WordSuggestionService::class,
-        WordMeaningGeneratorService::class => WordMeaningGeneratorService::class,
+        WordSuggestionAdapter::class => WordSuggestionAdapter::class,
+        WordMeaningGeneratorAdapter::class => WordMeaningGeneratorAdapter::class,
     ];
 }

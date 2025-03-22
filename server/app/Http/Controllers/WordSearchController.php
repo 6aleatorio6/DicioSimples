@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\WordSuggestionService;
+use App\Adapters\WordSuggestionAdapter;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Contracts\Cache\Repository as Cache;
 
 class WordSearchController extends Controller
 {
-    function __construct(private WordSuggestionService $wordSuggestionService, private Cache $cache) {}
+    function __construct(private WordSuggestionAdapter $wordSuggestionAdapter, private Cache $cache) {}
 
     public function show()
     {
@@ -24,7 +24,7 @@ class WordSearchController extends Controller
 
         $query = $request->input('query');
 
-        $suggestions = $this->wordSuggestionService->getSuggestionsCached($query);
+        $suggestions = $this->wordSuggestionAdapter->getSuggestionsCached($query);
 
 
         return Inertia::render(

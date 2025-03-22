@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Adapters;
 
 use Illuminate\Support\Facades\Http;
 
-class WordContentGeneratorService
+class WordContentGeneratorAdapter
 {
 
   private $apiKey;
@@ -120,21 +120,10 @@ class WordContentGeneratorService
     return json_decode($wordContentJson, true);
   }
 
-  /**
-   * @return array{
-   *     word: string,
-   *     wordBase: string,
-   *     partOfSpeech: string,
-   *     meanings: array<array{ title: string, explanation: string }>,
-   *     synonyms: string[],
-   *     antonyms: string[],
-   *     isExist: bool
-   * }
-   */
+
   public function generate(string $word): array
   {
     $wordContent = $this->fetch($word);
-
 
     return $wordContent;
   }

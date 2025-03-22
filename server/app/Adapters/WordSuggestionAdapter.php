@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Services;
+namespace App\Adapters;
 
 use PhpSpellcheck\Misspelling;
 use PhpSpellcheck\Spellchecker\Hunspell;
 
 
-class WordSuggestionService
+class WordSuggestionAdapter
 {
     private $hunspell;
 

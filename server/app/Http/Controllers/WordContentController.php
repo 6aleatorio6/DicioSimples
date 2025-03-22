@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Adapters\WordContentGeneratorAdapter;
+use App\Adapters\WordSuggestionAdapter;
 use App\Exceptions\InvalidWordException;
 use App\Models\Word;
-use App\Services\WordContentGeneratorService;
-use App\Services\WordSuggestionService;
 use Inertia\Inertia;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Http\Request;
@@ -13,8 +13,8 @@ use Illuminate\Http\Request;
 class WordContentController extends Controller
 {
     function __construct(
-        private WordContentGeneratorService $wordMeaningGeneratorService,
-        private WordSuggestionService $wordSuggestionService,
+        private WordContentGeneratorAdapter $wordMeaningGeneratorAdapter,
+        private WordSuggestionAdapter $wordSuggestionAdapter,
         private Word $word,
         private Cache $cache
     ) {}
@@ -31,7 +31,7 @@ class WordContentController extends Controller
 
 
         if (!$wordContent) {
-            $wordContentGenereated = $this->wordMeaningGeneratorService->generate($wordName);
+            $wordContentGenereated = $this->wordMeaningGeneratorAdapter->generate($wordName);
 
             if (!$wordContentGenereated['isExist']) throw new InvalidWordException($wordName, []);
 
@@ -63,7 +63,7 @@ class WordContentController extends Controller
     {
         // Validate word
         if (!$this->cache->has('word_' . $wordName)) {
-            $suggestions = $this->wordSuggestionService->getSuggestionsCached($wordName);
+            $suggestions = $this->wordSuggestionAdapter->getSuggestionsCached($wordName);
             if ($suggestions) throw new InvalidWordException($wordName, $suggestions);
         }
 
