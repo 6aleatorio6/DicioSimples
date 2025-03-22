@@ -4,14 +4,14 @@ namespace App\Adapters;
 
 use Illuminate\Support\Facades\Http;
 
-class WordContentGeneratorAdapter
+class WordContentLLMAdapter
 {
 
   private $apiKey;
 
   public function __construct()
   {
-    $this->apiKey = env('GEMINI_KEY'); // Defina sua chave da API no .env
+    $this->apiKey = config('app.gemini_key');
   }
 
 
