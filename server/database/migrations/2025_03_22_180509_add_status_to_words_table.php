@@ -13,12 +13,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('words', function (Blueprint $table) {
-            $table->enum('status', ['completed', 'pending', 'failed', 'generating', 'unknown'])
+            $table->enum('status', ['COMPLETED', 'PARTIAL', 'FAILED', 'UNKNOWN', 'PROCESSING'])
                 ->default('pending');
         });
 
-        DB::table('words')->whereNull('meanings')->update(['status' => 'pending']);
-        DB::table('words')->whereNotNull('meanings')->update(['status' => 'completed']);
+        DB::table('words')->whereNull('meanings')->update(['status' => 'PARTIAL']);
+        DB::table('words')->whereNotNull('meanings')->update(['status' => 'COMPLETED']);
     }
 
     /**
