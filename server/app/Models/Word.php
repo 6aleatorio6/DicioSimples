@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+
 
 
 /**
@@ -18,13 +16,15 @@ use Illuminate\Validation\ValidationException;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $word
+ * @property string|null $part_of_speech
  * @property int|null $base_form
- * @property string|null $meanings
- * @property int $views
+ * @property array<array-key, mixed>|null $meanings
+ * @property int $view_count
+ * @property WordStatus $status
  * @property-read Word|null $baseForm
- * @property-read Collection<int, Word> $wordAntonyms
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Word> $wordAntonyms
  * @property-read int|null $word_antonyms_count
- * @property-read Collection<int, Word> $wordSynonyms
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Word> $wordSynonyms
  * @property-read int|null $word_synonyms_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Word newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Word newQuery()
@@ -33,106 +33,69 @@ use Illuminate\Validation\ValidationException;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereMeanings($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word wherePartOfSpeech($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereViews($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereViewCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereWord($value)
+ * @property string|null $base_word
+ * @property-read Word|null $baseWord
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Word whereBaseWord($value)
  * @mixin \Eloquent
  */
 class Word extends Model
 {
 	protected $table = 'words';
 
-	protected $casts = [
-		'base_form' => 'int',
-		'views' => 'int'
-	];
-
 	protected $fillable = [
 		'word',
+		'part_of_speech',
+		'base_word',
 		'meanings',
-		'partOfSpeech'
+		'status'
 	];
 
-	protected $hidden = [
-		'pivot',
-		'created_at',
+	protected $casts = [
+		'meanings' => 'array',
 	];
 
-
-	public function baseForm()
+	public function baseWord()
 	{
-		return $this->belongsTo(Word::class, 'base_form');
+		return $this->belongsTo(Word::class, 'base_word');
 	}
 
 	public function wordSynonyms()
 	{
-		return $this->belongsToMany(Word::class, 'word_synonym', 'word_id', 'synonym_id');
+		return $this->belongsToMany(Word::class, 'word_synonym', 'word_id', 'synonym');
 	}
 
 	public function wordAntonyms()
 	{
-		return $this->belongsToMany(Word::class, 'word_antonym', 'word_id', 'antonym_id');
+		return $this->belongsToMany(Word::class, 'word_antonym', 'word_id', 'antonym');
 	}
 
-
-
-
-	protected function setMeaningsAttribute($value)
+	protected function setStatusAttribute(WordStatus $value)
 	{
-		$validator = Validator::make(['meanings' => $value], [
-			'meanings' => 'array',
-			'meanings.*.explanation' => 'required|string',
-			'meanings.*.title' => 'required|string',
-		]);
-
-		if ($validator->fails())  new ValidationException($validator);
-
-		$this->attributes['meanings'] = json_encode($value);
+		$this->attributes['status'] = $value;
 	}
 
-	protected function getMeaningsAttribute($value)
+
+	// query builder 
+
+	public function findByNameWithRelations(string $wordName)
 	{
-		return json_decode($value, true);
+		return Word::with(['baseForm:word', 'wordSynonyms:word', 'wordAntonyms:word'])
+			->whereNotStatus(WordStatus::PARTIAL)
+			->whereWord($wordName)
+			->first();
 	}
+}
 
-
-
-
-	/** @param "Synonyms"|"Antonyms" $relation */
-	public function createAndAttachWords(string $relation, array $wordNames)
-	{
-		// 1. Busca as palavras já existentes pelo nome
-		$existingWords = self::select('word', 'id')->whereIn('word',  $wordNames)->get();
-
-		// Pega os ids das palavras já existentes
-		$idsToAttach = $existingWords->pluck('id')->toArray();
-
-		// 2. Cria as palavras que não existem
-		$wordsToCreate = array_diff($wordNames, $existingWords->pluck('word')->toArray());
-		$wordsToCreate = array_map(fn($word)  => ['word' => $word], $wordsToCreate);
-
-		if (count($wordsToCreate) == 0) return;
-
-		self::insert($wordsToCreate, ['word']);
-
-		// 3. Pega os IDs das novas palavras criadas e os adiciona aos IDs existentes
-		$newIds = self::select('id')->whereIn('word', $wordsToCreate)->get()->pluck('id')->toArray();
-
-		// Merge dos IDs existentes com os novos
-		$idsToAttach = array_merge($idsToAttach, $newIds);
-
-		// 4. Anexa os IDs na relação sem remover os já existentes
-		$this->{'word' . $relation}()->attach($idsToAttach);
-	}
-
-
-	public function toArray()
-	{
-		$array = parent::toArray();
-
-		// Converte as chaves para camelCase
-		return collect($array)->mapWithKeys(function ($value, $key) {
-			return [Str::camel($key) => $value];
-		})->toArray();
-	}
+enum WordStatus: string
+{
+	case COMPLETED = 'COMPLETED';
+	case PARTIAL = 'PARTIAL';
+	case FAILED = 'FAILED';
+	case UNKNOWN = 'UNKNOWN';
+	case PROCESSING = 'PROCESSING';
 }
