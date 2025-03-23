@@ -10,7 +10,9 @@ defineProps<{
 
 <template>
     <div class="">
-        <div class="flex min-h-[98.4vh] flex-col bg-body font-inter text-text">
+        <div
+            class="flex min-h-[96.5vh] flex-col bg-body font-inter text-text lg:min-h-[98vh]"
+        >
             <header
                 class="flex flex-col items-center justify-between bg-bodySec px-4 md:py-5 lg:grid lg:grid-cols-6"
             >

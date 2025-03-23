@@ -50,8 +50,8 @@ function createDescription(): string {
         <title>{{ capWord(word) }}</title>
         <meta name="description" :content="createDescription()" />
     </Head>
-    <div class="flex flex-col gap-2">
-        <section class="mt-16">
+    <div class="gap- flex flex-col">
+        <section class="mt-6 sm:mt-14">
             <h1 class="text-5xl font-bold uppercase">{{ word }}</h1>
             <div class="my-1 border-b-2 border-bodySec" />
             <p v-if="partOfSpeech" class="ms-2 text-lg text-text-400">
@@ -100,10 +100,9 @@ function createDescription(): string {
         </SectionContent>
     </div>
 
-    <Link :href="route('home')" class="m-auto mb-10 mt-20 w-7/12">
+    <Link :href="route('home')" class="m-auto my-16 sm:w-7/12">
         <PrimaryButton
-            class="w-full justify-center py-7"
-            style="font-size: 1.7rem"
+            class="w-full justify-center py-4 text-lg sm:py-6 sm:text-xl"
         >
             Buscar outra palavra
         </PrimaryButton>
