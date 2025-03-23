@@ -13,9 +13,17 @@ const props = defineProps<{ suggestions?: string[] }>();
 const query = ref('');
 const wordSelected = ref<string | undefined>();
 
+const suggestionsDiv = ref<HTMLDivElement | null>(null); // Ref para a div de sugestões
 watch(
     () => props.suggestions,
-    () => (wordSelected.value = props.suggestions?.[0]),
+    () => {
+        wordSelected.value = props.suggestions?.[0];
+
+        suggestionsDiv.value!.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+        });
+    },
 );
 
 /**
@@ -54,6 +62,8 @@ const moveSelected = (distance: number) => {
 
     wordSelected.value = props.suggestions[newIndex];
 };
+
+//
 </script>
 
 <template>
@@ -84,6 +94,7 @@ const moveSelected = (distance: number) => {
             <ul
                 class="divide-y divide-gray-200"
                 @mouseleave="wordSelected = props.suggestions?.[0]"
+                ref="suggestionsDiv"
             >
                 <li v-if="isLoadingSuggestion" class="px-4 py-2">
                     Carregando...
