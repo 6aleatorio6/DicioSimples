@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Adapters\WordSuggestionAdapter;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Contracts\Cache\Repository as Cache;
 
 class WordSearchController extends Controller
 {
-    function __construct(private WordSuggestionAdapter $wordSuggestionAdapter, private Cache $cache) {}
+    function __construct(private WordSuggestionAdapter $wordSuggestionAdapter,) {}
 
     public function show()
     {
