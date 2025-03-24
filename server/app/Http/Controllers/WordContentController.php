@@ -61,14 +61,19 @@ class WordContentController extends Controller
 
     public function __invoke(string $wordName, Request $request)
     {
-        // Validate word
+        // Validate word with regex
+        if (!preg_match('/^[\p{L}\p{M}\s\-]+$/u', $wordName)) {
+            throw new InvalidWordException($wordName, []);
+        }
+
         if (!$this->cache->has('word_' . $wordName)) {
             $suggestions = $this->wordSuggestionService->getSuggestionsCached($wordName);
             if ($suggestions) throw new InvalidWordException($wordName, $suggestions);
         }
 
-        $wordContent = $this->cache->rememberForever(
+        $wordContent = $this->cache->remember(
             'word_' . $wordName,
+            now()->addDay(7),
             fn() => $this->getWordContent($wordName)
         );
 
