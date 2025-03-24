@@ -4,6 +4,7 @@ namespace App\Services;
 
 use PhpSpellcheck\Misspelling;
 use PhpSpellcheck\Spellchecker\Hunspell;
+use Illuminate\Contracts\Cache\Repository as Cache;
 
 
 class WordSuggestionService
@@ -11,7 +12,7 @@ class WordSuggestionService
     private $hunspell;
 
     // Construtor para inicializar o serviço
-    public function __construct(private $language = 'pt_BR')
+    public function __construct(private Cache $cache)
     {
         $this->hunspell = Hunspell::create();
     }
@@ -19,7 +20,7 @@ class WordSuggestionService
 
     private function getMisspelling(string $word): ?Misspelling
     {
-        return  $this->hunspell->check($word, [$this->language])->current();
+        return  $this->hunspell->check($word, ["pt_BR"])->current();
     }
 
     /**
@@ -43,8 +44,9 @@ class WordSuggestionService
 
     public function getSuggestionsCached(string $prefix, $limit = 5): ?array
     {
-        return cache()->rememberForever(
+        return $this->cache->remember(
             'search_suggestions_' . $prefix . '_' . $limit,
+            now()->addDay(7),
             fn() => $this->getSuggestions($prefix, $limit)
         );
     }
