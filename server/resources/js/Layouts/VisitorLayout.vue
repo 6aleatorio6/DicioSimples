@@ -36,10 +36,10 @@ defineProps<{
                 <nav class="lg:col-span-1">
                     <Link
                         v-if="$page.props.auth.user"
-                        :href="route('dashboard')"
-                        class="rounded bg-bodyTri px-4 py-2 text-text hover:bg-bodyTri/70"
+                        :href="route('admin.words.index')"
+                        class="rounded bg-bodySec-300 px-4 py-2 text-text-300 hover:bg-bodyTri/70"
                     >
-                        Dashboard
+                        admin
                     </Link>
                 </nav>
             </header>
