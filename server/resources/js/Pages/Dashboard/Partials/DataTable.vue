@@ -25,7 +25,7 @@ function navPagination(url: string) {
 }
 
 const handleSearch = function () {
-    router.reload({ data: { query: query.value } });
+    router.reload({ data: { query: query.value, page: 1 } });
 };
 
 const resetSearch = function () {
