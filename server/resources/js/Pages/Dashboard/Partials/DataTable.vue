@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DangerButton from '@/Components/DangerButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { executeWithDelay } from '@/helpers';
 import { TableWordResponse, Word } from '@/types/words';
@@ -6,7 +7,10 @@ import { router } from '@inertiajs/vue3';
 import { nextTick, ref, watch } from 'vue';
 import { useRoute } from '../../../../../vendor/tightenco/ziggy/src/js';
 
-const emit = defineEmits<{ showWord: [word: Word] }>();
+const emit = defineEmits<{
+    showWord: [word: Word];
+    deleteWord: [word: Word];
+}>();
 
 const { tableData } = defineProps<{ tableData: TableWordResponse }>();
 
@@ -168,6 +172,12 @@ watch(
                         >
                             ?
                         </PrimaryButton>
+                        <DangerButton
+                            class="flex h-6 w-1 justify-center !p-3"
+                            @click="emit('deleteWord', wordD)"
+                        >
+                            X
+                        </DangerButton>
                     </td>
                 </tr>
             </tbody>
