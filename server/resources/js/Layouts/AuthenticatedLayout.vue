@@ -4,14 +4,20 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const showingNavigationDropdown = ref(false);
+
+const page = usePage();
+
+if (!page.props.auth.user) {
+    router.get(route('login'), {}, { replace: true });
+}
 </script>
 
 <template>
-    <div>
+    <div v-if="page.props.auth.user">
         <div class="min-h-screen bg-gray-100">
             <nav class="border-b border-gray-100 bg-white">
                 <!-- Menu de Navegação Principal -->
