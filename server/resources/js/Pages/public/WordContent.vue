@@ -3,17 +3,10 @@ import List from '@/Components/List.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SectionContent from '@/Components/SectionContent.vue';
 import { capWord } from '@/helpers';
-import { WordRelation } from '@/types';
+import { Word, WordRelation } from '@/types/words';
 import { Head, Link } from '@inertiajs/vue3';
 
-const props = defineProps<{
-    word: string;
-    partOfSpeech: string;
-    baseForm?: WordRelation;
-    meanings: { title: string; explanation: string }[];
-    wordSynonyms: WordRelation[];
-    wordAntonyms: WordRelation[];
-}>();
+const props = defineProps<Word>();
 
 const hasBaseForm = props.baseForm?.word && props.baseForm?.word !== props.word;
 const hasSynonyms = props.wordSynonyms.length;
