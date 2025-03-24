@@ -5,13 +5,11 @@ import { TableWordResponse, Word } from '@/types/words';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import DataTable from './Partials/DataTable.vue';
-import DeleteWord from './Partials/DeleteWord.vue';
 import WordShow from './Partials/WordShow.vue';
 
 const props = defineProps<{ tableWords: TableWordResponse }>();
 
 const showWord = ref<null | Word>(null);
-const deleteWord = ref<null | Word>(null);
 </script>
 
 <template>
@@ -23,7 +21,7 @@ const deleteWord = ref<null | Word>(null);
             </h2>
         </template>
 
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl pb-16 sm:px-6 lg:px-8">
             <div class="py-6">
                 <div class="">
                     <div
@@ -39,10 +37,8 @@ const deleteWord = ref<null | Word>(null);
             <DataTable
                 :tableData="props.tableWords"
                 @show-word="(w) => (showWord = w)"
-                @delete-word="(w) => (deleteWord = w)"
             />
             <WordShow :word-content="showWord" @close="showWord = null" />
-            <DeleteWord :word-content="deleteWord" @close="deleteWord = null" />
         </div>
     </AuthenticatedLayout>
 </template>

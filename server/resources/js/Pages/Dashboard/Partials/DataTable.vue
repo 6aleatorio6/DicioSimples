@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import DangerButton from '@/Components/DangerButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { executeWithDelay } from '@/helpers';
 import { TableWordResponse, Word } from '@/types/words';
 import { router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { useRoute } from '../../../../../vendor/tightenco/ziggy/src/js';
 
-const emit = defineEmits<{
-    showWord: [word: Word];
-    deleteWord: [word: Word];
-}>();
+const emit = defineEmits<{ showWord: [word: Word] }>();
 
 const { tableData } = defineProps<{ tableData: TableWordResponse }>();
 
@@ -19,14 +15,32 @@ const route = useRoute();
 const query = ref((route().queryParams['query'] as string) || '');
 
 function navPagination(url: string) {
-    const params = new URLSearchParams(url);
-    const page = params.get('page');
+    const params = new URL(url);
+    const page = params.searchParams.get('page');
     if (page) router.reload({ data: { page, query: query.value } });
 }
 
 const handleSearch = function () {
     router.reload({ data: { query: query.value } });
 };
+
+const resetSearch = function () {
+    query.value = '';
+    handleSearch();
+};
+
+const tableRef = ref<HTMLTableElement | null>(null);
+watch(
+    () => tableData.data,
+    () => {
+        nextTick(() =>
+            tableRef.value?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+            }),
+        );
+    },
+);
 </script>
 
 <template>
@@ -46,7 +60,7 @@ const handleSearch = function () {
                 <button
                     class="top-1 my-auto flex h-9 w-9 items-center rounded px-2"
                     type="button"
-                    @click="handleSearch"
+                    @click="resetSearch"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -98,12 +112,13 @@ const handleSearch = function () {
     <div
         class="relative flex h-full w-full flex-col rounded-lg bg-white bg-clip-border text-gray-700 shadow-md"
     >
-        <table class="w-full min-w-max table-auto text-left">
+        <table class="w-full min-w-max table-auto text-left" ref="tableRef">
             <thead>
                 <tr>
                     <th
                         v-for="header in [
                             'Palavra',
+                            'Classe',
                             'Contextos',
                             'Visualizações',
                             'Ações',
@@ -134,12 +149,18 @@ const handleSearch = function () {
                     </td>
                     <td class="p-4 py-5">
                         <p class="text-sm text-slate-500">
+                            {{ wordD.partOfSpeech }}
+                        </p>
+                    </td>
+                    <td class="p-4 py-5">
+                        <p class="text-sm text-slate-500">
                             {{ wordD.meanings.map((m) => m.title).join(', ') }}
                         </p>
                     </td>
                     <td class="p-4 py-5">
                         <p class="text-sm text-slate-500">{{ wordD.views }}</p>
                     </td>
+
                     <td class="flex space-x-2 px-4 py-5">
                         <PrimaryButton
                             class="flex h-6 w-1 justify-center !p-3 text-sm"
@@ -147,12 +168,6 @@ const handleSearch = function () {
                         >
                             ?
                         </PrimaryButton>
-                        <DangerButton
-                            class="flex h-6 w-1 justify-center !p-3"
-                            @click="emit('deleteWord', wordD)"
-                        >
-                            X
-                        </DangerButton>
                     </td>
                 </tr>
             </tbody>
