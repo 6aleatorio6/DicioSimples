@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { WordRelation } from '@/types';
+import { WordRelation } from '@/types/words';
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps<{
