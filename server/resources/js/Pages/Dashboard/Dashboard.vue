@@ -2,14 +2,16 @@
 import { capWord } from '@/helpers';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { TableWordResponse, Word } from '@/types/words';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import DataTable from './Partials/DataTable.vue';
+import DeleteWord from './Partials/DeleteWord.vue';
 import WordShow from './Partials/WordShow.vue';
 
 const props = defineProps<{ tableWords: TableWordResponse }>();
 
 const showWord = ref<null | Word>(null);
+const deleteWord = ref<null | Word>(null);
 </script>
 
 <template>
@@ -37,8 +39,13 @@ const showWord = ref<null | Word>(null);
             <DataTable
                 :tableData="props.tableWords"
                 @show-word="(w) => (showWord = w)"
+                @delete-word="(w) => (deleteWord = w)"
             />
             <WordShow :word-content="showWord" @close="showWord = null" />
+            <DeleteWord
+                :word-content="deleteWord"
+                @close="(deleteWord = null) || router.reload()"
+            />
         </div>
     </AuthenticatedLayout>
 </template>

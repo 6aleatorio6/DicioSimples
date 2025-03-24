@@ -29,6 +29,16 @@ class WordManagerController extends Controller
     }
 
     /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $this->word->destroy($id);
+
+        return back()->with('status', 'Word deleted successfully');
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
