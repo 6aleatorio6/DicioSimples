@@ -12,8 +12,3 @@ export type PageProps<
         user: User;
     };
 };
-
-export interface WordRelation {
-    word: string;
-    id: number;
-}
