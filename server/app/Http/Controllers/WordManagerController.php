@@ -21,7 +21,7 @@ class WordManagerController extends Controller
     {
         $query = $request->query('query', '');
 
-        $words = $this->word->orderBy("views", "desc")->whereNotNull('meanings')->where("word", "LIKE", "{$query}%")->paginate(8, '*',);
+        $words = $this->word->with(['baseForm:id,word', 'wordSynonyms:id,word', 'wordAntonyms:id,word'])->orderBy("views", "desc")->whereNotNull('meanings')->where("word", "LIKE", "{$query}%")->paginate(8, '*',);
 
         return Inertia::render('Dashboard/Dashboard', [
             'tableWords' =>  $words,
