@@ -48,8 +48,10 @@ watch(
 </script>
 
 <template>
-    <div class="mb-3 flex w-full items-center justify-between pl-3">
-        <div class="space-y-1">
+    <div
+        class="mb-3 flex w-full flex-col items-center justify-between pl-3 sm:flex-row"
+    >
+        <div class="hidden space-y-1 sm:block">
             <h3 class="text-lg font-semibold text-slate-800">
                 Palavras Geradas
             </h3>
@@ -60,7 +62,7 @@ watch(
         </div>
 
         <div class="ml-3">
-            <div class="relative flex w-full min-w-[200px] max-w-sm">
+            <div class="relative flex w-full min-w-[200px]">
                 <button
                     class="top-1 my-auto flex h-9 w-9 items-center rounded px-2"
                     type="button"
@@ -114,94 +116,102 @@ watch(
     </div>
 
     <div
-        class="relative flex h-full w-full flex-col rounded-lg bg-white bg-clip-border text-gray-700 shadow-md"
+        class="flex w-full overflow-hidden rounded-lg bg-white bg-clip-border text-gray-700 shadow-md"
     >
-        <table class="w-full min-w-max table-auto text-left" ref="tableRef">
-            <thead>
-                <tr>
-                    <th
-                        v-for="header in [
-                            'Palavra',
-                            'Classe',
-                            'Contextos',
-                            'Visualizações',
-                            'Ações',
-                        ]"
-                        :key="header"
-                        class="border-b border-slate-200 bg-slate-50 p-4"
+        <div class="relative flex flex-1 flex-col overflow-x-scroll">
+            <table class="w-full min-w-max table-auto text-left" ref="tableRef">
+                <thead>
+                    <tr>
+                        <th
+                            v-for="header in [
+                                'Palavra',
+                                'Classe',
+                                'Contextos',
+                                'Visualizações',
+                                'Ações',
+                            ]"
+                            :key="header"
+                            class="border-b border-slate-200 bg-slate-50 p-4"
+                        >
+                            <p
+                                class="text-sm font-normal leading-none text-slate-500"
+                            >
+                                {{ header }}
+                            </p>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for="wordD in tableData.data"
+                        :key="wordD.id"
+                        class="border-b border-slate-200 hover:bg-slate-50"
                     >
-                        <p
-                            class="text-sm font-normal leading-none text-slate-500"
-                        >
-                            {{ header }}
-                        </p>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                    v-for="wordD in tableData.data"
-                    :key="wordD.id"
-                    class="border-b border-slate-200 hover:bg-slate-50"
-                >
-                    <td class="p-4 py-5">
-                        <p
-                            class="block font-semibold capitalize text-slate-800"
-                        >
-                            {{ wordD.word }}
-                        </p>
-                    </td>
-                    <td class="p-4 py-5">
-                        <p class="text-sm text-slate-500">
-                            {{ wordD.partOfSpeech }}
-                        </p>
-                    </td>
-                    <td class="p-4 py-5">
-                        <p class="text-sm text-slate-500">
-                            {{ wordD.meanings.map((m) => m.title).join(', ') }}
-                        </p>
-                    </td>
-                    <td class="p-4 py-5">
-                        <p class="text-sm text-slate-500">{{ wordD.views }}</p>
-                    </td>
+                        <td class="p-4 py-5">
+                            <p
+                                class="block font-semibold capitalize text-slate-800"
+                            >
+                                {{ wordD.word }}
+                            </p>
+                        </td>
+                        <td class="p-4 py-5">
+                            <p class="text-sm text-slate-500">
+                                {{ wordD.partOfSpeech }}
+                            </p>
+                        </td>
+                        <td class="p-4 py-5">
+                            <p class="text-sm text-slate-500">
+                                {{
+                                    wordD.meanings
+                                        .map((m) => m.title)
+                                        .join(', ')
+                                }}
+                            </p>
+                        </td>
+                        <td class="p-4 py-5">
+                            <p class="text-sm text-slate-500">
+                                {{ wordD.views }}
+                            </p>
+                        </td>
 
-                    <td class="flex space-x-2 px-4 py-5">
-                        <PrimaryButton
-                            class="flex h-6 w-1 justify-center !p-3 text-sm"
-                            @click="emit('showWord', wordD)"
-                        >
-                            ?
-                        </PrimaryButton>
-                        <DangerButton
-                            class="flex h-6 w-1 justify-center !p-3"
-                            @click="emit('deleteWord', wordD)"
-                        >
-                            X
-                        </DangerButton>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        <td class="flex space-x-2 px-4 py-5">
+                            <PrimaryButton
+                                class="flex h-6 w-1 justify-center !p-3 text-sm"
+                                @click="emit('showWord', wordD)"
+                            >
+                                ?
+                            </PrimaryButton>
+                            <DangerButton
+                                class="flex h-6 w-1 justify-center !p-3"
+                                @click="emit('deleteWord', wordD)"
+                            >
+                                X
+                            </DangerButton>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <div class="flex items-center justify-between px-4 py-3">
-            <div class="text-sm text-slate-500">
-                Mostrando <b>{{ tableData.from }}</b> a
-                <b>{{ tableData.to }}</b> de <b>{{ tableData.total }}</b>
-            </div>
-            <div class="flex space-x-1">
-                <button
-                    v-for="page in tableData.links"
-                    :key="page.label"
-                    :disabled="!page.url"
-                    @click="() => page.url && navPagination(page.url)"
-                    :class="[
-                        'ease min-h-9 min-w-9 rounded border px-3 py-1 text-sm font-normal transition duration-200',
-                        page.active
-                            ? 'border-slate-800 bg-slate-800 text-white hover:border-slate-600 hover:bg-slate-600'
-                            : 'border-slate-200 bg-white text-slate-500 hover:border-slate-400 hover:bg-slate-50',
-                    ]"
-                    v-html="page.label"
-                />
+            <div class="flex items-center justify-between px-4 py-3">
+                <div class="text-sm text-slate-500">
+                    Mostrando <b>{{ tableData.from }}</b> a
+                    <b>{{ tableData.to }}</b> de <b>{{ tableData.total }}</b>
+                </div>
+                <div class="flex space-x-1">
+                    <button
+                        v-for="page in tableData.links"
+                        :key="page.label"
+                        :disabled="!page.url"
+                        @click="() => page.url && navPagination(page.url)"
+                        :class="[
+                            'ease min-h-9 min-w-9 rounded border px-3 py-1 text-sm font-normal transition duration-200',
+                            page.active
+                                ? 'border-slate-800 bg-slate-800 text-white hover:border-slate-600 hover:bg-slate-600'
+                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-400 hover:bg-slate-50',
+                        ]"
+                        v-html="page.label"
+                    />
+                </div>
             </div>
         </div>
     </div>

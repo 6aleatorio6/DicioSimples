@@ -23,7 +23,7 @@ const deleteWord = ref<null | Word>(null);
             </h2>
         </template>
 
-        <div class="mx-auto max-w-7xl pb-16 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
             <div class="py-6">
                 <div class="">
                     <div
